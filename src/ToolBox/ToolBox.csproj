@@ -19,8 +19,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SharpDevLib" Version="2.1.2.8" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.5" />
+		<PackageReference Include="SharpDevLib" Version="2.1.4" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
