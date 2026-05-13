@@ -1,123 +1,276 @@
-const { createApp, ref, computed, onMounted } = Vue;
+import { FButton } from './components/FButton.js';
+import { FSingleSelect } from './components/FSingleSelect.js';
+import { CopyButton } from './components/CopyButton.js';
+import { IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash } from './components/icon.js';
+import { TimestampView } from './views/TimestampView.js';
+import { JsonView } from './views/JsonView.js';
+import { RsaKeyView } from './views/RsaKeyView.js';
+import { RsaView } from './views/RsaView.js';
+import { AesView } from './views/AesView.js';
+import { DesView } from './views/DesView.js';
+import { TripleDesView } from './views/TripleDesView.js';
+import { StringView } from './views/StringView.js';
+import { RegexView } from './views/RegexView.js';
+import { EncodingView } from './views/EncodingView.js';
+import { HashView } from './views/HashView.js';
+import { JwtView } from './views/JwtView.js';
+import { GuidView } from './views/GuidView.js';
+import { HttpView } from './views/HttpView.js';
+import { Base64View } from './views/Base64View.js';
+
+const IconChevronDown = {
+    props: { size: { type: Number, default: 16 } },
+    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
+};
+
+const NavIcon = {
+    props: { icon: String, size: { type: Number, default: 18 } },
+    template: `
+        <span v-if="isHashIcon" class="flex items-center justify-center" :style="{ width: size + 'px', height: size + 'px' }">
+            <IconHash :size="size" />
+        </span>
+        <span v-else class="icon-emoji" style="font-size: 18px; line-height: 1;">{{ icon }}</span>
+    `,
+    computed: {
+        isHashIcon() { return this.icon === '#'; }
+    },
+    components: { IconHash }
+};
+
+const { createApp, ref, computed, inject, onMounted, onBeforeUnmount } = Vue;
 const { createRouter, createWebHashHistory, useRoute, useRouter } = VueRouter;
+
+const ThemeSymbol = Symbol('theme');
 
 const navItems = [
     { route: '/timestamp', label: '时间戳', icon: '⏰' },
-    { route: '/json', label: 'JSON工具', icon: '📄' },
-    { route: '/encryption', label: '加密', icon: '🔒' },
-    { route: '/string', label: '字符串', icon: '📝' },
-    { route: '/regex', label: '正则测试', icon: '🔍' },
-    { route: '/encoding', label: '编码', icon: '🔠' },
-    { route: '/hash', label: '哈希', icon: '#️⃣' },
-    { route: '/jwt', label: 'JWT', icon: '🔑' },
+    { 
+        label: '文本工具', 
+        icon: '✏️',
+        children: [
+            { route: '/json', label: 'JSON工具', icon: '📄' },
+            { route: '/encoding', label: '编码转换', icon: '🔠' },
+            { route: '/base64', label: '文件Base64', icon: '📦' },
+            { route: '/string', label: '字符串', icon: '📝' },
+            { route: '/regex', label: '正则测试', icon: '🔍' },
+        ],
+        group: 'text'
+    },
+    { 
+        label: '加密安全', 
+        icon: '🔐',
+        children: [
+            { route: '/rsa-key', label: 'RSA密钥', icon: '🔑' },
+            { route: '/rsa', label: 'RSA', icon: '🔒' },
+            { route: '/aes', label: 'AES', icon: '🔐' },
+            { route: '/des', label: 'DES', icon: '🔏' },
+            { route: '/tripledes', label: '3DES', icon: '🗝️' },
+            { route: '/hash', label: '哈希', icon: '#' },
+            { route: '/jwt', label: 'JWT', icon: '🔑' },
+        ],
+        group: 'security'
+    },
     { route: '/guid', label: 'GUID', icon: '🆔' },
     { route: '/http', label: 'HTTP', icon: '🌐' },
 ];
 
+const ThemePlugin = {
+    install(app) {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = ref(saved || (prefersDark ? 'dark' : 'light'));
+
+        const effectiveTheme = () => theme.value;
+
+        const toggle = () => {
+            theme.value = theme.value === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', theme.value);
+            document.documentElement.setAttribute('data-theme', theme.value);
+        };
+
+        app.provide(ThemeSymbol, { theme, effectiveTheme, toggle });
+    }
+};
+
 const App = {
-    components: { Button },
+    components: { FButton, IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconChevronDown, NavIcon },
     template: `
-    <div class="h-full gradient-bg flex flex-col lg:flex-row">
-        <!-- Mobile header -->
-        <header class="block lg:hidden glass border-b border-gray-200 sticky top-0 z-30">
-            <div class="flex items-center justify-between p-2">
-                <div class="flex items-center space-x-1">
-                    <div class="w-8 h-8 rounded bg-indigo-700 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    </div>
-                    <span class="text-lg font-bold gradient-text">ToolBox</span>
+    <div class="flex h-full overflow-hidden">
+        <div v-if="mobileOpen && isMobile" class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-200" :class="mobileOpen ? 'opacity-100' : 'opacity-0'" @click="mobileOpen = false"></div>
+        <aside class="sidebar bg-[var(--bg-surface)] border-r border-[var(--border-subtle)] flex flex-col shrink-0 z-30"
+            :class="{
+                'sidebar--open': sidebarOpen && !isMobile,
+                'sidebar--closed': !sidebarOpen && !isMobile,
+                'sidebar--mobile-open': mobileOpen && isMobile,
+                'sidebar--mobile': isMobile
+            }">
+            <div class="h-[60px] flex items-center justify-between px-4 py-4 border-b border-[var(--border-subtle)] shrink-0 overflow-hidden">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <IconLogo />
+                    <div class="font-bold text-[var(--text-primary)] tracking-tight whitespace-nowrap">ToolBox</div>
                 </div>
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded hover:bg-gray-100">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path v-if="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                <button class="inline-flex items-center justify-center w-7 h-7 rounded text-[var(--text-tertiary)] cursor-pointer transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] shrink-0"
+                    @click="closeSidebar" title="关闭侧边栏">
+                    <IconClose />
                 </button>
             </div>
-        </header>
-        <!-- Mobile sidebar overlay -->
-        <div v-if="mobileMenuOpen" class="fixed inset-0 bg-black/50 z-40 lg:hidden" @click="mobileMenuOpen = false"></div>
-        <!-- Mobile sidebar -->
-        <aside :class="['fixed h-screen overflow-y-auto left-0 top-0 bottom-0 w-64 glass border-r border-gray-200 z-50 flex flex-col transform transition-transform lg:hidden',
-                     mobileMenuOpen ? 'translate-x-0' : '-translate-x-full']">
-            <div class="p-2 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-1">
-                        <div class="w-8 h-8 rounded bg-indigo-700 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <nav class="flex-1 px-2.5 py-3 overflow-y-auto overflow-x-hidden">
+                <template v-for="item in navItems" :key="item.route || item.group">
+                    <template v-if="item.children">
+                        <div class="sidebar-nav-group">
+                            <div class="sidebar-nav-item sidebar-nav-item--clickable"
+                                :class="{ 'sidebar-nav-item--active': isGroupActive(item) }"
+                                @click="toggleGroup(item.group)">
+                                <NavIcon :icon="item.icon" />
+                                <span class="flex-1 whitespace-nowrap">{{ item.label }}</span>
+                                <IconChevronDown class="sidebar-nav-chevron transition-transform duration-200" :class="{ 'rotate-180': openGroups[item.group] }" />
+                            </div>
+                            <div v-show="openGroups[item.group]" class="sidebar-nav-submenu">
+                                <a v-for="child in item.children" :key="child.route"
+                                    @click="navigate(child.route); mobileOpen = false;"
+                                    :class="['sidebar-nav-item sidebar-nav-item--sub', currentRoute === child.route ? 'sidebar-nav-item--active' : '']">
+                                    <NavIcon :icon="child.icon" />
+                                    <span class="whitespace-nowrap">{{ child.label }}</span>
+                                </a>
+                            </div>
                         </div>
-                        <span class="text-lg font-bold gradient-text">ToolBox</span>
-                    </div>
-                    <button @click="mobileMenuOpen = false" class="p-2 rounded hover:bg-gray-100">
-                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-            </div>
-            <nav class="flex-1 p-2 overflow-y-auto">
-                <a v-for="item in navItems" :key="item.route"
-                   @click="navigate(item.route); mobileMenuOpen = false;"
-                   :class="['flex items-center space-x-1 px-3 py-2.5 rounded',
-                            currentRoute === item.route
-                              ? 'bg-indigo-700/10 text-indigo-700 font-medium border-l-3 border-indigo-700'
-                              : 'text-gray-600 hover:bg-gray-100']">
-                    <span class="icon-emoji">{{ item.icon }}</span>
-                    <span class="text-sm">{{ item.label }}</span>
-                </a>
+                    </template>
+                    <template v-else>
+                        <a @click="navigate(item.route); mobileOpen = false;"
+                            :class="['sidebar-nav-item', currentRoute === item.route ? 'sidebar-nav-item--active' : '']">
+                            <NavIcon :icon="item.icon" />
+                            <span class="whitespace-nowrap">{{ item.label }}</span>
+                        </a>
+                    </template>
+                </template>
             </nav>
         </aside>
-
-        <!-- Desktop sidebar -->
-        <aside class="hidden lg:flex flex-col h-screen overflow-hidden p-8 pr-0">
-            <div class="w-60 glass border-r border-gray-200 overlow-y-auto rounded flex-1 flex flex-col">
-                <div class="p-4 border-b border-gray-200">
-                    <div class="flex items-center space-x-1">
-                        <div class="w-8 h-8 rounded bg-indigo-700 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        </div>
-                        <span class="text-lg font-bold gradient-text">ToolBox</span>
-                    </div>
+        <div class="flex-1 overflow-hidden flex flex-col min-w-0">
+            <header class="h-[60px] flex items-center justify-between px-4 sm:px-6 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] shrink-0">
+                <div class="flex items-center gap-3">
+                    <button v-if="isMobile ? !mobileOpen : !sidebarOpen" class="inline-flex items-center justify-center w-9 h-9 rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)] cursor-pointer transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]"
+                        @click="openSidebar" title="打开菜单">
+                        <IconMenu />
+                    </button>
+                    <IconLogo v-if="isMobile ? !mobileOpen : !sidebarOpen" :size="28" />
+                    <h1 class="text-lg font-semibold text-[var(--text-primary)] tracking-tight leading-snug">
+                        {{ currentTitle }}
+                    </h1>
+                    <button @click="refreshPage" class="inline-flex items-center justify-center w-7 h-7 rounded text-[var(--text-tertiary)] cursor-pointer transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] active:bg-[var(--accent)] active:text-white" title="刷新">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                    </button>
                 </div>
-                <nav class="flex-1 p-2 overflow-y-auto">
-                    <a v-for="item in navItems" :key="item.route"
-                    @click="navigate(item.route)"
-                    :class="['flex items-center space-x-1 px-3 py-2.5 rounded',
-                                currentRoute === item.route
-                                ? 'bg-indigo-700/10 text-indigo-700 font-medium border-l-3 border-indigo-700'
-                                : 'text-gray-600 hover:bg-gray-100']">
-                        <span class="icon-emoji">{{ item.icon }}</span>
-                        <span class="text-sm">{{ item.label }}</span>
-                    </a>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- Main content -->
-        <main class="flex-1 p-2 lg:p-8 flex flex-col overflow-hidden">
-            <div class="flex-1 glass rounded p-2 lg:p-6 shadow-xl flex flex-col overflow-y-auto">
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button class="inline-flex items-center justify-center w-8 h-8 rounded border border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-secondary)] cursor-pointer text-sm transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] hover:border-[var(--border-strong)]" @click="toggleTheme" :title="isDark ? '切换到浅色模式' : '切换到深色模式'">
+                        <IconSun v-if="isDark" /><IconMoon v-else />
+                    </button>
+                </div>
+            </header>
+            <main class="flex-1 overflow-y-auto">
                 <router-view v-slot="{ Component }">
                     <keep-alive>
-                        <component :is="Component" />
+                        <component :is="Component" ref="currentViewRef" class="relative p-4 sm:p-6" />
                     </keep-alive>
                 </router-view>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
     `,
     setup() {
         const router = useRouter();
         const route = useRoute();
+        const sidebarOpen = ref(true);
+        const mobileOpen = ref(false);
+        const isMobile = ref(window.innerWidth < 1024);
+        const openGroups = ref({ text: true, security: true });
+        const currentViewRef = ref(null);
+        
+        const theme = inject(ThemeSymbol, null);
+        const isDark = computed(() => theme ? theme.effectiveTheme() === 'dark' : false);
+        const toggleTheme = () => { if (theme) theme.toggle(); };
+
         const currentRoute = computed(() => route.path);
-        const mobileMenuOpen = ref(false);
 
-        // 移动端底部导航显示所有项目
-        const mobileNavItems = navItems;
+        const currentTitle = computed(() => {
+            for (const item of navItems) {
+                if (item.route === route.path) return item.label;
+                if (item.children) {
+                    const child = item.children.find(c => c.route === route.path);
+                    if (child) return child.label;
+                }
+            }
+            return 'ToolBox';
+        });
 
-        function navigate(path) {
+        const isGroupActive = (group) => {
+            const groupItem = navItems.find(i => i.group === group);
+            if (!groupItem) return false;
+            return groupItem.children.some(c => c.route === route.path);
+        };
+
+        const toggleGroup = (group) => {
+            openGroups.value[group] = !openGroups.value[group];
+        };
+
+        const updateIsMobile = () => {
+            isMobile.value = window.innerWidth < 1024;
+            if (isMobile.value) {
+                sidebarOpen.value = true;
+                mobileOpen.value = false;
+            } else {
+                mobileOpen.value = false;
+            }
+        };
+
+        onMounted(() => { window.addEventListener('resize', updateIsMobile) });
+        onBeforeUnmount(() => window.removeEventListener('resize', updateIsMobile));
+
+        const closeSidebar = () => {
+            if (isMobile.value) {
+                mobileOpen.value = false;
+            } else {
+                sidebarOpen.value = false;
+            }
+        };
+
+        const openSidebar = () => {
+            if (isMobile.value) {
+                mobileOpen.value = true;
+            } else {
+                sidebarOpen.value = true;
+            }
+        };
+
+        const navigate = (path) => {
             router.push(path);
-            mobileMenuOpen.value = false;
-        }
+            mobileOpen.value = false;
+        };
 
-        return { navItems, mobileNavItems, currentRoute, mobileMenuOpen, navigate };
+        const refreshPage = () => {
+            const instance = currentViewRef.value;
+            if (instance && typeof instance.refresh === 'function') {
+                instance.refresh();
+            }
+        };
+
+        return { 
+            navItems, 
+            currentRoute, 
+            currentTitle,
+            sidebarOpen, 
+            mobileOpen, 
+            isMobile, 
+            isDark,
+            openGroups,
+            isGroupActive,
+            toggleGroup,
+            closeSidebar, 
+            openSidebar, 
+            navigate, 
+            toggleTheme,
+            currentViewRef,
+            refreshPage
+        };
     }
 };
 
@@ -127,20 +280,41 @@ const router = createRouter({
         { path: '/', redirect: '/timestamp' },
         { path: '/timestamp', component: TimestampView },
         { path: '/json', component: JsonView },
-        { path: '/encryption', component: EncryptionView },
+        { path: '/rsa-key', component: RsaKeyView },
+        { path: '/rsa', component: RsaView },
+        { path: '/aes', component: AesView },
+        { path: '/des', component: DesView },
+        { path: '/tripledes', component: TripleDesView },
         { path: '/string', component: StringView },
         { path: '/regex', component: RegexView },
         { path: '/encoding', component: EncodingView },
         { path: '/hash', component: HashView },
         { path: '/jwt', component: JwtView },
         { path: '/guid', component: GuidView },
+        { path: '/base64', component: Base64View },
         { path: '/http', component: HttpView },
     ],
 });
 
 const app = createApp(App);
+app.use(ThemePlugin);
 app.use(router);
-app.component('Button', Button);
+app.component('FButton', FButton);
+app.component('FSingleSelect', FSingleSelect);
 app.component('CopyButton', CopyButton);
-app.component('SingleSelect', SingleSelect);
+app.component('IconLogo', IconLogo);
+app.component('IconMenu', IconMenu);
+app.component('IconClose', IconClose);
+app.component('IconSun', IconSun);
+app.component('IconMoon', IconMoon);
+app.component('IconPlus', {
+    props: { size: { type: Number, default: 16 } },
+    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+});
+app.component('IconTrash', {
+    props: { size: { type: Number, default: 16 } },
+    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>'
+});
 app.mount('#app');
+
+export { FButton, FSingleSelect, CopyButton };

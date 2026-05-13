@@ -1,48 +1,43 @@
-const JsonView = {
+export const JsonView = {
     template: `
-    <h2 class="text-xl font-bold text-gray-800 mb-1 flex items-center space-x-1">
-        <span class="text-indigo-700">📄</span>
-        <span>JSON工具</span>
-    </h2>
-
-    <!-- Desktop tabs -->
-    <div class="hidden lg:flex space-x-1 mb-1 border-b border-gray-200 pb-3">
-        <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
-            :class="['px-4 py-2 text-sm rounded',
-                     activeTab === tab.key ? 'bg-indigo-700 text-white' : 'text-gray-600 hover:bg-gray-100']">
-            {{ tab.label }}
-        </button>
-    </div>
-    <!-- Mobile dropdown -->
-    <div class="lg:hidden mb-1">
-        <label class="block text-sm font-medium text-gray-700 mb-1">选择操作</label>
-        <SingleSelect v-model="activeTab" :options="tabs.map(t => ({ value: t.key, label: t.label }))" size="md"></SingleSelect>
-    </div>
-
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-1">
-        <div class="flex flex-col gap-1">
-            <div class="flex-1 flex flex-col gap-1">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ inputLabel }}</label>
-                <textarea v-model="currentInput" :placeholder="inputPlaceholder"
-                    class="flex-1 rounded border border-gray-300 px-3 py-2 mono text-sm focus:border-indigo-500 outline-none resize-none"></textarea>
-            </div>
-
-            <div v-if="activeTab === 'to-csharp'" class="flex items-center space-x-1">
-                <label class="text-sm text-gray-700">根类名:</label>
-                <input type="text" v-model="rootName" placeholder="Root"
-                    class="w-40 rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 outline-none">
-            </div>
-
-            <Button @click="execute" variant="primary">{{ executeLabel }}</Button>
+    <div class="space-y-4">
+        <div class="hidden lg:flex gap-1 border-b border-[var(--border-subtle)] pb-3">
+            <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
+                :class="['px-4 py-2 text-sm rounded transition-colors',
+                         activeTab === tab.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                {{ tab.label }}
+            </button>
+        </div>
+        <div class="lg:hidden">
+            <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
+            <FSingleSelect v-model="activeTab" :options="tabs.map(t => ({ value: t.key, label: t.label }))"></FSingleSelect>
         </div>
 
-        <div class="flex flex-col gap-1">
-            <div class="flex items-center justify-between mb-1">
-                <label class="block text-sm font-medium text-gray-700">结果</label>
-                <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-3">
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">{{ inputLabel }}</label>
+                    <textarea v-model="currentInput" :placeholder="inputPlaceholder"
+                        class="flex-1 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                </div>
+
+                <div v-if="activeTab === 'to-csharp'" class="flex items-center gap-2">
+                    <label class="text-xs text-[var(--text-secondary)]">根类名:</label>
+                    <input type="text" v-model="rootName" placeholder="Root"
+                        class="w-32 px-3 py-1.5 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                </div>
+
+                <FButton type="primary">{{ executeLabel }}</FButton>
             </div>
-            <textarea v-model="currentOutput" readonly :placeholder="outputPlaceholder"
-                class="flex-1 rounded border border-gray-300 px-3 py-2 mono text-sm bg-gray-50 focus:border-indigo-500 outline-none resize-none"></textarea>
+
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
+                    <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
+                </div>
+                <textarea v-model="currentOutput" readonly :placeholder="outputPlaceholder"
+                    class="flex-1 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)]"></textarea>
+            </div>
         </div>
     </div>
     `,
@@ -100,6 +95,11 @@ const JsonView = {
                 }
                 this.currentOutput = res.data;
             } catch(e) { this.currentOutput = '操作失败: ' + e.message; }
+        },
+        refresh() {
+            this.inputs = {};
+            this.outputs = {};
+            this.activeTab = 'format';
         }
     }
 };

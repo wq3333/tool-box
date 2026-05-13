@@ -1,39 +1,34 @@
-const HashView = {
+export const HashView = {
     template: `
-    <h2 class="text-xl font-bold text-gray-800 mb-1 flex items-center space-x-1">
-        <span class="text-indigo-700">#️⃣</span>
-        <span>哈希计算</span>
-    </h2>
-
-    <div class="space-y-1">
+    <div class="space-y-4">
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">输入文本</label>
+            <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">输入文本</label>
             <textarea v-model="text" placeholder="输入要计算哈希的文本..."
-                class="min-h-50 w-full rounded border border-gray-300 px-3 py-2 mono text-sm focus:border-indigo-500 outline-none resize-y"></textarea>
+                class="min-h-[150px] w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-y placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
         </div>
 
-        <div class="flex flex-col gap-1">
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-1">算法</label>
-                <div class="flex flex-wrap gap-1">
+        <div class="space-y-3">
+            <div>
+                <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">算法</label>
+                <div class="flex flex-wrap gap-2">
                     <button v-for="algo in algorithms" :key="algo.value" @click="algorithm = algo.value"
-                        :class="['px-3 py-1.5 rounded text-sm font-medium transition-colors',
-                            algorithm === algo.value ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+                        :class="['px-3 py-1.5 rounded text-xs font-medium transition-colors',
+                            algorithm === algo.value ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)]']">
                         {{ algo.label }}
                     </button>
                 </div>
             </div>
             <div v-if="isHmac" class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-1">密钥</label>
+                <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">密钥</label>
                 <input type="text" v-model="key" placeholder="HMAC密钥"
-                    class=" rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 outline-none">
+                    class="w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
             </div>
         </div>
 
-        <Button @click="compute" variant="primary">计算</Button>
+        <FButton type="primary">计算</FButton>
 
-        <div v-if="result" class="flex items-center space-x-1 bg-gray-50 rounded px-4 py-3">
-            <code class="mono text-sm flex-1 break-all select-all">{{ result }}</code>
+        <div v-if="result" class="flex items-center gap-2 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded">
+            <code class="flex-1 text-xs font-mono text-[var(--text-primary)] break-all">{{ result }}</code>
             <CopyButton :text="result"></CopyButton>
         </div>
     </div>
@@ -73,6 +68,12 @@ const HashView = {
                     this.result = res.data;
                 }
             } catch(e) { this.result = '计算失败: ' + e.message; }
+        },
+        refresh() {
+            this.text = '';
+            this.key = '';
+            this.result = '';
+            this.algorithm = 'sha256';
         }
     }
 };
