@@ -5,12 +5,12 @@ const { ref, computed } = Vue;
 export const HttpView = {
     components: { FInput },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-none flex items-center justify-between">
             <div></div>
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" v-model="localMode" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)] focus:ring-[var(--accent-subtle)]">
-                <span class="text-xs text-[var(--text-secondary)]">本地模式</span>
+            <label class="flex items-center gap-2 cursor-pointer p-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
+                <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                <span class="text-sm text-slate-600">本地模式</span>
             </label>
         </div>
 
@@ -18,16 +18,23 @@ export const HttpView = {
             <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
                 <FSingleSelect v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
                 <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
-                <FButton @click="send" type="primary" :loading="loading">{{ loading ? '请求中...' : '发送' }}</FButton>
+                <FButton @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    {{ loading ? '请求中...' : '发送' }}
+                </FButton>
             </div>
 
             <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div class="flex flex-col gap-3">
-                    <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-                        <div class="flex items-center justify-between">
-                            <label class="text-sm font-medium text-[var(--text-secondary)]">请求头</label>
-                            <FButton type="default" size="sm" @click="addHeader">
-                                <IconPlus :size="14" />
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm font-semibold text-slate-700">请求头</label>
+                            <FButton type="default" size="sm" @click="addHeader" class="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
                                 添加
                             </FButton>
                         </div>
@@ -35,16 +42,18 @@ export const HttpView = {
                             <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
                                 <FInput v-model="h.key" placeholder="键" class="flex-1 min-w-[80px]"></FInput>
                                 <FInput v-model="h.value" placeholder="值" class="flex-1 min-w-[80px]"></FInput>
-                                <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--danger)] hover:bg-[var(--bg-hover)] rounded transition-colors flex-shrink-0">
-                                    <IconTrash :size="14" />
+                                <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div v-if="method !== 'GET'" class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
+                    <div v-if="method !== 'GET'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                         <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                            <label class="text-sm font-medium text-[var(--text-secondary)]">请求体</label>
+                            <label class="text-sm font-semibold text-slate-700">请求体</label>
                             <FSingleSelect v-model="contentType"
                                 :options="[{value:'application/json',label:'application/json'},{value:'application/x-www-form-urlencoded',label:'application/x-www-form-urlencoded'},{value:'multipart/form-data',label:'multipart/form-data'},{value:'text/plain',label:'text/plain'},{value:'text/xml',label:'text/xml'}]"></FSingleSelect>
                         </div>
@@ -55,13 +64,15 @@ export const HttpView = {
                                         :options="[{value:'text',label:'文本'},{value:'file',label:'文件'}]"></FSingleSelect>
                                     <FInput v-model="f.key" placeholder="字段名" class="flex-1 min-w-[80px]"></FInput>
                                     <input v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" type="text" v-model="f.value" placeholder="字段值"
-                                        class="flex-1 min-w-[80px] px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                                        class="flex-1 min-w-[80px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                     <input v-else type="file" :ref="el => { if (el) f.fileRef = el }"
                                         class="flex-1 min-w-[80px] text-xs"
                                         @change="f.fileName = f.fileRef.files[0]?.name || ''">
-                                    <span v-if="f.type === 'file' && f.fileName" class="text-xs text-[var(--text-tertiary)] truncate max-w-[100px]">{{ f.fileName }}</span>
-                                    <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--danger)] hover:bg-[var(--bg-hover)] rounded transition-colors flex-shrink-0">
-                                        <IconTrash :size="14" />
+                                    <span v-if="f.type === 'file' && f.fileName" class="text-xs text-slate-500 truncate max-w-[100px]">{{ f.fileName }}</span>
+                                    <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -70,49 +81,52 @@ export const HttpView = {
                             </div>
                         </div>
                         <textarea v-else v-model="body" placeholder="请求体内容..."
-                            class="flex-1 min-h-0 w-full px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] font-mono resize-none outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                            class="flex-1 min-h-0 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
                     </div>
                 </div>
 
-                <div v-if="response" class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
-                    <div class="flex items-center gap-2">
-                        <span :class="['px-3 py-1 rounded text-sm font-bold', response.statusCode < 300 ? 'bg-[var(--success)]/10 text-[var(--success)]' : response.statusCode < 400 ? 'bg-[var(--warning)]/10 text-[var(--warning)]' : 'bg-[var(--danger)]/10 text-[var(--danger)]']">
+                <div v-if="response" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+                    <div class="flex items-center gap-3">
+                        <span :class="['px-3 py-1.5 rounded-lg text-sm font-bold', response.statusCode < 300 ? 'bg-emerald-100 text-emerald-700' : response.statusCode < 400 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700']">
                             {{ response.statusCode }} {{ response.statusText }}
                         </span>
-                        <span class="text-xs text-[var(--text-tertiary)]">{{ response.duration }}ms</span>
-                        <span v-if="localMode" class="text-xs text-[var(--accent)] bg-[var(--accent-subtle)] px-2 py-0.5 rounded">本地模式</span>
+                        <span class="text-sm text-slate-500">{{ response.duration }}ms</span>
+                        <span v-if="localMode" class="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">本地模式</span>
                     </div>
 
                     <div class="flex-none">
-                        <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">响应头</label>
-                        <div class="bg-[var(--bg-base)] rounded px-3 py-2 text-xs font-mono max-h-[100px] overflow-y-auto">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">响应头</label>
+                        <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[100px] overflow-y-auto">
                             <div v-for="(v, k) in response.headers" :key="k" class="flex flex-wrap">
-                                <span class="text-[var(--text-tertiary)]">{{ k }}:</span> <span class="text-[var(--text-primary)] ml-1">{{ v }}</span>
+                                <span class="text-slate-500">{{ k }}:</span> <span class="text-slate-700 ml-1">{{ v }}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex-1 min-h-0 flex flex-col">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="text-xs font-medium text-[var(--text-secondary)]">响应体</label>
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="text-sm font-semibold text-slate-700">响应体</label>
                             <div class="flex items-center gap-2">
-                                <button @click="responseView = 'raw'" :class="['px-2 py-1 text-xs rounded', responseView === 'raw' ? 'bg-[var(--accent-subtle)] text-[var(--accent)]' : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]']">Raw</button>
-                                <button @click="responseView = 'html'" :class="['px-2 py-1 text-xs rounded', responseView === 'html' ? 'bg-[var(--accent-subtle)] text-[var(--accent)]' : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]']">HTML</button>
-                                <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-2 py-1 text-xs rounded', responseView === 'preview' ? 'bg-[var(--accent-subtle)] text-[var(--accent)]' : 'text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]']">图片预览</button>
+                                <button @click="responseView = 'raw'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'raw' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">Raw</button>
+                                <button @click="responseView = 'html'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'html' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">HTML</button>
+                                <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'preview' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">图片预览</button>
                                 <CopyButton :text="response.body"></CopyButton>
                             </div>
                         </div>
                         <textarea v-if="responseView === 'raw'" :value="response.body" readonly
-                            class="flex-1 min-h-0 w-full px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] resize-none outline-none"></textarea>
-                        <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 min-h-0 w-full rounded border border-[var(--border-subtle)] bg-white"></iframe>
-                        <div v-else class="flex-1 min-h-0 flex items-center justify-center overflow-auto">
-                            <img :src="response.body" class="max-w-full max-h-full object-contain rounded border border-[var(--border-subtle)]"></img>
+                            class="flex-1 min-h-0 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none"></textarea>
+                        <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 min-h-0 w-full rounded-lg border border-slate-200 bg-white"></iframe>
+                        <div v-else class="flex-1 min-h-0 flex items-center justify-center overflow-auto bg-slate-50 rounded-lg">
+                            <img :src="response.body" class="max-w-full max-h-full object-contain rounded-lg border border-slate-200"></img>
                         </div>
                     </div>
                 </div>
 
-                <div v-else class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex items-center justify-center text-[var(--text-tertiary)] text-sm">
-                    发送请求后响应将显示在这里
+                <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col items-center justify-center text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="text-sm">发送请求后响应将显示在这里</span>
                 </div>
             </div>
         </div>

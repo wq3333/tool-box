@@ -5,114 +5,122 @@ const { ref } = Vue;
 export const JwtView = {
     components: { FInput },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-none">
-            <div class="hidden lg:flex gap-1 border-b border-[var(--border-subtle)] pb-2">
-                <button v-for="t in jwtTabs" :key="t.key" @click="jwtTab = t.key"
-                    :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                        jwtTab === t.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
-                    {{ t.label }}
-                </button>
-            </div>
-            <div class="lg:hidden">
-                <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
-                <FSingleSelect v-model="jwtTab" :options="jwtTabs.map(t => ({value: t.key, label: t.label}))"></FSingleSelect>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1">
+                <div class="flex flex-wrap gap-1">
+                    <button v-for="t in jwtTabs" :key="t.key" @click="jwtTab = t.key"
+                        :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+                            jwtTab === t.key ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100']">
+                        {{ t.label }}
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div v-if="jwtTab === 'decode'" class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">JWT</label>
+        <div v-if="jwtTab === 'decode'" class="flex-1 min-h-0 bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">JWT</label>
                     <textarea v-model="jwtDecodeToken" placeholder="粘贴JWT..." @input="jwtDoDecode"
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">Header</label>
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">Header</label>
                     <textarea v-model="jwtHeaderJson" readonly placeholder="Header JSON..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
                 </div>
             </div>
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">Payload</label>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">Payload</label>
                     <textarea v-model="jwtPayloadJson" readonly placeholder="Payload JSON..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
                 </div>
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">Signature</label>
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">Signature</label>
                     <textarea v-model="jwtSignature" readonly placeholder="Signature..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
                 </div>
             </div>
         </div>
 
-        <div v-if="jwtTab === 'sign'" class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-none">
-                <div class="flex flex-col gap-2">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">算法</label>
+        <div v-if="jwtTab === 'sign'" class="flex-1 min-h-0 bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-none">
+                <div class="flex flex-col gap-3">
+                    <label class="text-sm font-semibold text-slate-700">算法</label>
                     <FSingleSelect v-model="jwtSignAlg" :options="jwtAlgOptions"></FSingleSelect>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥/Secret</label>
+                <div class="flex flex-col gap-3">
+                    <label class="text-sm font-semibold text-slate-700">密钥/Secret</label>
                     <FInput v-model="jwtSignKey" placeholder="HMAC密钥或PEM"></FInput>
                 </div>
             </div>
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">Header</label>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">Header</label>
                     <textarea v-model="jwtSignHeader" placeholder='{"alg": "HS256", "typ": "JWT"}'
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">Payload</label>
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">Payload</label>
                     <textarea v-model="jwtSignPayload" placeholder='{"sub": "123", "name": "John"}'
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
-            <div class="flex gap-2 flex-none">
-                <FButton type="primary" @click="jwtDoSign">签名</FButton>
+            <div class="flex gap-3">
+                <FButton type="primary" @click="jwtDoSign" class="flex-1 py-3 text-base">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    签名
+                </FButton>
             </div>
-            <div class="flex flex-col gap-2 flex-1 min-h-0">
+            <div class="flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">JWT</label>
+                    <label class="text-sm font-semibold text-slate-700">JWT</label>
                     <CopyButton v-if="jwtSignResult" :text="jwtSignResult"></CopyButton>
                 </div>
                 <textarea v-model="jwtSignResult" readonly placeholder="生成的JWT..."
-                    class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
             </div>
         </div>
 
-        <div v-if="jwtTab === 'verify'" class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-none">
-                <div class="flex flex-col gap-2">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">算法</label>
+        <div v-if="jwtTab === 'verify'" class="flex-1 min-h-0 bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-none">
+                <div class="flex flex-col gap-3">
+                    <label class="text-sm font-semibold text-slate-700">算法</label>
                     <FSingleSelect v-model="jwtVerifyAlg" :options="jwtAlgOptions"></FSingleSelect>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥/Secret</label>
+                <div class="flex flex-col gap-3">
+                    <label class="text-sm font-semibold text-slate-700">密钥/Secret</label>
                     <FInput v-model="jwtVerifyKey" placeholder="HMAC密钥或PEM"></FInput>
                 </div>
             </div>
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">JWT</label>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-slate-700">JWT</label>
                     <textarea v-model="jwtVerifyToken" placeholder="粘贴JWT..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
+                <div class="flex flex-col gap-3 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
-                        <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
-                        <div v-if="jwtVerifyResult" class="flex items-center gap-1" :class="jwtVerifyResult.valid ? 'text-[var(--success)]' : 'text-[var(--danger)]'">
-                            <span class="text-sm">{{ jwtVerifyResult.valid ? '✓' : '✗' }}</span>
+                        <label class="text-sm font-semibold text-slate-700">结果</label>
+                        <div v-if="jwtVerifyResult" class="flex items-center gap-1" :class="jwtVerifyResult.valid ? 'text-emerald-600' : 'text-red-600'">
+                            <span class="text-lg">{{ jwtVerifyResult.valid ? '✓' : '✗' }}</span>
                         </div>
                     </div>
                     <textarea v-model="jwtVerifyJson" readonly placeholder="验证结果..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
                 </div>
             </div>
-            <div class="flex gap-2 flex-none">
-                <FButton type="primary" @click="jwtDoVerify">验证</FButton>
+            <div class="flex gap-3">
+                <FButton type="primary" @click="jwtDoVerify" class="flex-1 py-3 text-base">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    验证
+                </FButton>
             </div>
         </div>
     </div>

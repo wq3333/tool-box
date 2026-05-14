@@ -5,36 +5,52 @@ const { ref, computed } = Vue;
 export const HashView = {
     components: { FInput },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4">
-        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-            <div class="flex-1 min-h-0 flex flex-col gap-2">
-                <label class="block text-xs font-medium text-[var(--text-secondary)]">输入文本</label>
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+            <div class="flex-1 min-h-0 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
+                    <span class="text-xs text-slate-400">{{ text.length }} 字符</span>
+                </div>
                 <textarea v-model="text" placeholder="输入要计算哈希的文本..."
-                    class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
             </div>
 
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-3">
                 <div>
-                    <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">算法</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">算法</label>
                     <div class="flex flex-wrap gap-2">
                         <button v-for="algo in algorithms" :key="algo.value" @click="algorithm = algo.value"
-                            :class="['px-3 py-1.5 rounded text-xs font-medium transition-colors',
-                                algorithm === algo.value ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'bg-[var(--bg-base)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] border border-[var(--border-subtle)]']">
+                            :class="['px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                                algorithm === algo.value ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200']">
                             {{ algo.label }}
                         </button>
                     </div>
                 </div>
-                <div v-if="isHmac" class="flex flex-col gap-1">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
-                    <FInput v-model="key" placeholder="HMAC密钥"></FInput>
+                <div v-if="isHmac" class="flex flex-col gap-2">
+                    <label class="text-sm font-semibold text-slate-700">密钥</label>
+                    <FInput v-model="key" placeholder="HMAC密钥" class="w-full"></FInput>
                 </div>
             </div>
 
-            <FButton type="primary" @click="compute">计算</FButton>
+            <FButton type="primary" @click="compute" class="w-full py-3 text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                计算
+            </FButton>
 
-            <div v-if="result" class="flex items-center gap-2 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded">
-                <code class="flex-1 text-xs font-mono text-[var(--text-primary)] break-all">{{ result }}</code>
-                <CopyButton :text="result"></CopyButton>
+            <div v-if="result" class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-semibold text-slate-700">结果</label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">{{ algorithm.toUpperCase() }}</span>
+                        <CopyButton :text="result"></CopyButton>
+                    </div>
+                </div>
+                <div class="px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
+                    <code class="flex-1 text-sm font-mono text-slate-800 break-all">{{ result }}</code>
+                </div>
             </div>
         </div>
     </div>

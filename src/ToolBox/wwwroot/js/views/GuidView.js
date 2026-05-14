@@ -5,47 +5,56 @@ const { ref, onMounted } = Vue;
 export const GuidView = {
     components: { FInput },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4">
-        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-4">
-            <div class="flex items-center gap-2 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded">
-                <code class="flex-1 text-xs font-mono text-[var(--text-primary)]">00000000-0000-0000-0000-000000000000</code>
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+            <div class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <code class="flex-1 text-sm font-mono text-slate-700">00000000-0000-0000-0000-000000000000</code>
                 <CopyButton :text="'00000000-0000-0000-0000-000000000000'"></CopyButton>
             </div>
 
-            <div class="flex flex-col gap-3">
-                <div class="flex flex-wrap gap-3">
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="radio" v-model="format" value="D" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">带连字符</span>
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-wrap gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <input type="radio" v-model="format" value="D" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm text-slate-600">带连字符</span>
                     </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="radio" v-model="format" value="N" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">无连字符</span>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <input type="radio" v-model="format" value="N" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm text-slate-600">无连字符</span>
                     </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="radio" v-model="format" value="B" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">带花括号</span>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <input type="radio" v-model="format" value="B" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm text-slate-600">带花括号</span>
                     </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="radio" v-model="format" value="P" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">带圆括号</span>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <input type="radio" v-model="format" value="P" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                        <span class="text-sm text-slate-600">带圆括号</span>
                     </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="checkbox" v-model="uppercase" class="w-4 h-4 rounded border-[var(--border-subtle)] text-[var(--accent)]">
-                        <span class="text-xs text-[var(--text-secondary)]">大写</span>
+                    <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <input type="checkbox" v-model="uppercase" class="w-4 h-4 text-blue-500 border-slate-300 rounded">
+                        <span class="text-sm text-slate-600">大写</span>
                     </label>
                 </div>
 
-                <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                    <label class="text-xs text-[var(--text-secondary)]">生成数量</label>
+                <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+                    <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">生成数量</label>
                     <FInput type="number" v-model.number="count" class="w-24" min="1" max="100"></FInput>
-                    <FButton type="primary" @click="generate">生成</FButton>
+                    <FButton type="primary" @click="generate" class="flex-1 lg:flex-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        生成
+                    </FButton>
                 </div>
 
                 <div v-if="guids.length" class="flex-1 min-h-0 overflow-y-auto space-y-2">
                     <div v-for="(g, i) in guids" :key="i"
-                        class="flex items-center gap-2 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded">
-                        <code class="flex-1 text-xs font-mono text-[var(--text-primary)] select-all">{{ g }}</code>
+                        class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
+                        <span class="text-xs text-slate-500 w-6">#{{ i + 1 }}</span>
+                        <code class="flex-1 text-sm font-mono text-slate-700 select-all">{{ g }}</code>
                         <CopyButton :text="g"></CopyButton>
                     </div>
                 </div>
