@@ -15,23 +15,6 @@ export const RsaView = {
             </div>
         </div>
 
-        <div class="flex-none">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                    <label class="text-sm font-semibold text-slate-700 mb-2 block">编码方式</label>
-                    <FSingleSelect v-model="rsaEncoding" :options="encodingOptions"></FSingleSelect>
-                </div>
-                <div v-if="activeTab === 'encrypt' || activeTab === 'decrypt'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                    <label class="text-sm font-semibold text-slate-700 mb-2 block">填充方式</label>
-                    <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
-                </div>
-                <div v-if="activeTab === 'sign' || activeTab === 'verify'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                    <label class="text-sm font-semibold text-slate-700 mb-2 block">哈希算法</label>
-                    <FSingleSelect v-model="hashAlgorithm" :options="hashOptions"></FSingleSelect>
-                </div>
-            </div>
-        </div>
-
         <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
@@ -39,20 +22,35 @@ export const RsaView = {
                     <textarea v-model="currentInput" :placeholder="inputPlaceholder"
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-            </div>
-
-            <div class="flex flex-col gap-4 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
+                <div v-if="activeTab === 'verify'" class="flex-1 flex flex-col gap-2">
+                    <label class="text-sm font-semibold text-slate-700">签名</label>
+                    <textarea v-model="signature" placeholder="粘贴签名..."
+                        class="flex-1 min-h-0 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-700 outline-none resize-none placeholder:text-slate-400"></textarea>
                 </div>
                 <div class="flex-1 flex flex-col gap-2">
                     <label class="text-sm font-semibold text-slate-700">密钥</label>
                     <textarea v-model="key" placeholder="粘贴密钥..."
-                        class="h-32 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-700 outline-none resize-none placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-700 outline-none resize-none placeholder:text-slate-400"></textarea>
                 </div>
-                <FButton type="primary" @click="execute" block>{{ executeLabel }}</FButton>
+            </div>
+
+            <div class="flex flex-col gap-4 self-center w-40">
+                <div v-if="activeTab === 'encrypt' || activeTab === 'decrypt'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                    <label class="text-sm font-semibold text-slate-700 mb-2 block">填充方式</label>
+                    <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
+                </div>
+                <template v-if="activeTab === 'sign' || activeTab === 'verify'">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <label class="text-sm font-semibold text-slate-700 mb-2 block">哈希算法</label>
+                        <FSingleSelect v-model="hashAlgorithm" :options="hashOptions"></FSingleSelect>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <label class="text-sm font-semibold text-slate-700 mb-2 block">填充方式</label>
+                        <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
+                    </div>
+                </template>
+
+                <FButton type="primary" @click="executeEncryption" block>{{ executeLabel }}</FButton>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
@@ -80,6 +78,7 @@ export const RsaView = {
         const key = ref('');
         const input = ref('');
         const output = ref('');
+        const signature = ref('');
 
         const encodingOptions = [
             { value: 'base64', label: 'Base64' },
@@ -147,7 +146,7 @@ export const RsaView = {
             }[activeTab.value];
         });
 
-        const execute = async () => {
+        const executeEncryption = async () => {
             if (!key.value.trim()) {
                 output.value = '请输入密钥';
                 return;
@@ -162,9 +161,8 @@ export const RsaView = {
                 switch (activeTab.value) {
                     case 'encrypt':
                         res = await api('POST', '/encryption/rsa/encrypt', {
-                            text: input.value,
-                            pem: key.value,
-                            encoding: rsaEncoding.value,
+                            plaintext: input.value,
+                            publicKey: key.value,
                             padding: rsaPadding.value
                         });
                         output.value = res.data;
@@ -172,29 +170,30 @@ export const RsaView = {
                     case 'decrypt':
                         res = await api('POST', '/encryption/rsa/decrypt', {
                             cipherText: input.value,
-                            pem: key.value,
-                            encoding: rsaEncoding.value,
+                            privateKey: key.value,
                             padding: rsaPadding.value
                         });
                         output.value = res.data;
                         break;
                     case 'sign':
                         res = await api('POST', '/encryption/rsa/sign', {
-                            text: input.value,
-                            pem: key.value,
-                            encoding: rsaEncoding.value,
+                            data: input.value,
+                            privateKey: key.value,
+                            padding: rsaPadding.value,
                             hashAlgorithm: hashAlgorithm.value
                         });
                         output.value = res.data;
                         break;
                     case 'verify':
-                        const signature = prompt('请输入签名');
-                        if (!signature) return;
-                        res = await api('POST', '/encryption/rsa/verify', {
-                            text: input.value,
-                            pem: key.value,
-                            signature: signature,
-                            encoding: rsaEncoding.value,
+                        if (!signature.value.trim()) {
+                            output.value = '请输入签名';
+                            return;
+                        }
+                        res = await api('POST', '/encryption/rsa/verify-sign', {
+                            data: input.value,
+                            publicKey: key.value,
+                            signature: signature.value,
+                            padding: rsaPadding.value,
                             hashAlgorithm: hashAlgorithm.value
                         });
                         output.value = res.data ? '✓ 签名验证通过' : '✗ 签名验证失败';
@@ -213,13 +212,14 @@ export const RsaView = {
             key.value = '';
             input.value = '';
             output.value = '';
+            signature.value = '';
         };
 
         return {
-            activeTab, tabs, rsaEncoding, rsaPadding, hashAlgorithm, key,
+            activeTab, tabs, rsaEncoding, rsaPadding, hashAlgorithm, key, signature,
             currentInput, currentOutput, inputLabel, inputPlaceholder, outputPlaceholder, executeLabel,
             encodingOptions, paddingOptions, hashOptions,
-            execute, refresh
+            executeEncryption, refresh
         };
     }
 };

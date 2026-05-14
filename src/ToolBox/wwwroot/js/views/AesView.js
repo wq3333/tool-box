@@ -1,10 +1,10 @@
-import { FInput } from '../components/FInput.js';
 import { toast } from '../components/Toast.js';
+import { IconLock,IconUnlock } from '../components/icon.js';
 
 const { ref } = Vue;
 
 export const AesView = {
-    components: { FInput },
+    components: { IconLock,IconUnlock },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
@@ -35,16 +35,11 @@ export const AesView = {
 
             <div class="flex gap-3">
                 <FButton type="primary" @click="encrypt" class="flex-1 py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
+                    <IconLock />
                     加密
                 </FButton>
-                <FButton type="default" @click="decrypt" class="flex-1 py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                <FButton type="success" @click="decrypt" class="flex-1 py-3 text-base">
+                    <IconUnlock />
                     解密
                 </FButton>
             </div>
