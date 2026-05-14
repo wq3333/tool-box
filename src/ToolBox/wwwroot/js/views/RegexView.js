@@ -1,108 +1,117 @@
+const { ref, watch } = Vue;
+
 export const RegexView = {
     template: `
-    <div class="space-y-4">
-        <div class="flex-1 flex flex-col lg:flex-row gap-4">
-            <div class="flex-0 lg:flex-3 flex flex-col gap-3">
-                <div>
-                    <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">正则表达式</label>
-                    <input type="text" v-model="pattern" placeholder="输入正则表达式..."
-                        class="w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-sm font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+    <div class="h-full flex flex-col gap-4 p-4">
+        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
+            <div class="flex-none grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">操作</label>
+                    <FSingleSelect v-model="mode" :options="[{value:'match',label:'匹配'},{value:'replace',label:'替换'},{value:'split',label:'分割'}]"></FSingleSelect>
                 </div>
-
-                <div class="flex items-center gap-4">
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="checkbox" v-model="ignoreCase" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">忽略大小写</span>
-                    </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer">
-                        <input type="checkbox" v-model="multiline" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)]">
-                        <span class="text-xs text-[var(--text-secondary)]">多行模式</span>
-                    </label>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">测试文本</label>
-                    <textarea v-model="text" rows="6" placeholder="输入测试文本..."
-                        class="w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-y placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
-                </div>
-
-                <FButton type="primary">测试</FButton>
-
-                <div v-if="result">
-                    <div v-if="!result.isValid" class="px-3 py-2 bg-[var(--danger)]/10 text-[var(--danger)] rounded text-xs">
-                        无效的正则表达式: {{ result.error }}
-                    </div>
-                    <div v-else class="space-y-2">
-                        <div class="px-3 py-2 bg-[var(--success)]/10 text-[var(--success)] rounded text-xs">
-                            找到 {{ result.matches.length }} 个匹配
-                        </div>
-                        <div v-for="(m, i) in result.matches" :key="i" class="px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded">
-                            <div class="text-xs text-[var(--text-secondary)]">匹配 {{ i + 1 }}: 索引 {{ m.index }}, 长度 {{ m.length }}</div>
-                            <code class="text-xs font-mono text-[var(--accent)]">{{ m.value }}</code>
-                            <div v-if="m.groups.length" class="mt-1 space-y-0.5">
-                                <div v-for="(g, gi) in m.groups" :key="gi" class="text-xs text-[var(--text-tertiary)]">
-                                    组 {{ g.name || gi }}: <span class="text-[var(--text-secondary)]">{{ g.value }}</span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">标志</label>
+                    <div class="flex gap-2">
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-[var(--text-secondary)]"><input type="checkbox" v-model="flags.i" class="w-3 h-3"><span>i</span></label>
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-[var(--text-secondary)]"><input type="checkbox" v-model="flags.m" class="w-3 h-3"><span>m</span></label>
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-[var(--text-secondary)]"><input type="checkbox" v-model="flags.g" class="w-3 h-3"><span>g</span></label>
+                        <label class="flex items-center gap-1 cursor-pointer text-xs text-[var(--text-secondary)]"><input type="checkbox" v-model="flags.s" class="w-3 h-3"><span>s</span></label>
                     </div>
                 </div>
             </div>
-
-            <div class="flex-1">
-                <h3 class="text-xs font-semibold text-[var(--text-secondary)] mb-2">常用正则</h3>
-                <div class="space-y-1 overflow-y-auto max-h-[300px]">
-                    <div v-for="p in patterns" :key="p.name"
-                        @click="usePattern(p)"
-                        class="px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded cursor-pointer hover:border-[var(--border-strong)]">
-                        <div class="text-xs font-medium text-[var(--text-primary)]">{{ p.name }}</div>
-                        <div class="text-xs text-[var(--text-tertiary)] truncate">{{ p.description }}</div>
-                    </div>
+            <div class="flex-none grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">正则表达式</label>
+                    <input type="text" v-model="pattern" placeholder="正则表达式..."
+                        class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
                 </div>
+                <div v-if="mode === 'replace'" class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">替换</label>
+                    <input type="text" v-model="replacement" placeholder="替换内容..."
+                        class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                </div>
+            </div>
+            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-2 flex-1 min-h-0">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
+                        <div class="flex gap-1">
+                            <button @click="fileInputEnc.click()" class="px-2 py-1 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded flex items-center gap-1">
+                                <span>📁</span>文件
+                            </button>
+                            <input type="file" ref="fileInputEnc" @change="onFileEnc($event)" class="hidden">
+                        </div>
+                    </div>
+                    <textarea v-model="input" placeholder="输入文本..." @input="run"
+                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+                </div>
+                <div class="flex flex-col gap-2 flex-1 min-h-0">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输出</label>
+                        <CopyButton v-if="result" :text="result"></CopyButton>
+                    </div>
+                    <textarea v-model="result" readonly placeholder="结果..."
+                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-2 flex-none">
+                <FButton type="primary" @click="run">执行</FButton>
             </div>
         </div>
     </div>
     `,
-    data() {
-        return {
-            pattern: '',
-            text: '',
-            ignoreCase: false,
-            multiline: false,
-            result: null,
-            patterns: []
-        };
-    },
-    async mounted() {
-        try {
-            const res = await api('GET', '/regex/patterns');
-            this.patterns = res.data;
-        } catch(e) {}
-    },
-    methods: {
-        async test() {
-            if (!this.pattern) return;
+    setup() {
+        const mode = ref('match');
+        const flags = ref({ i: true, m: false, g: true, s: false });
+        const pattern = ref('');
+        const replacement = ref('');
+        const input = ref('');
+        const result = ref('');
+
+        const run = () => {
+            if (!pattern.value) { result.value = ''; return; }
             try {
-                const res = await api('POST', '/regex/test', {
-                    pattern: this.pattern,
-                    text: this.text,
-                    ignoreCase: this.ignoreCase,
-                    multiline: this.multiline
-                });
-                this.result = res.data;
-            } catch(e) {
-                this.result = { isValid: false, error: e.message, matches: [] };
+                const f = (flags.value.i?'i':'')+(flags.value.m?'m':'')+(flags.value.g?'g':'')+(flags.value.s?'s':'');
+                const re = new RegExp(pattern.value, f);
+                if (mode.value === 'match') {
+                    const m = input.value.matchAll(re);
+                    let r = '';
+                    let i=0;
+                    for (const match of m) {
+                        r += `Match ${i++}: ${match[0]}\n`;
+                        if (match.length > 1) {
+                            for (let j=1; j<match.length; j++) { r += `  Group ${j}: ${match[j]}\n`; }
+                        }
+                    }
+                    result.value = r || '没有匹配';
+                } else if (mode.value === 'replace') {
+                    result.value = input.value.replace(re, replacement.value);
+                } else {
+                    result.value = input.value.split(re).map((s,i)=>`${i}: ${s}`).join('\\n');
+                }
+            } catch (e) {
+                result.value = '错误: ' + e.message;
             }
-        },
-        usePattern(p) {
-            this.pattern = p.pattern;
-        },
-        refresh() {
-            this.pattern = '';
-            this.text = '';
-            this.ignoreCase = false;
-            this.multiline = false;
-            this.result = null;
-        }
+        };
+
+        const onFileEnc = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const text = await file.text();
+            input.value = text;
+        };
+
+        const refresh = () => {
+            mode.value = 'match';
+            flags.value = { i: true, m: false, g: true, s: false };
+            pattern.value = '';
+            replacement.value = '';
+            input.value = '';
+            result.value = '';
+        };
+
+        watch([mode, pattern, replacement], () => { run(); });
+
+        return { mode, flags, pattern, replacement, input, result, run, onFileEnc, refresh };
     }
 };

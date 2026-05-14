@@ -1,7 +1,11 @@
 import { FButton } from './components/FButton.js';
 import { FSingleSelect } from './components/FSingleSelect.js';
 import { CopyButton } from './components/CopyButton.js';
-import { IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash } from './components/icon.js';
+import { 
+    IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash, IconChevronDown, NavIcon,
+    IconClock, IconEdit, IconDocument, IconText, IconType, IconSearch, IconShield,
+    IconKey, IconLock, IconUnlock, IconKeyAlt, IconPackage, IconID, IconGlobe, IconTerminal
+} from './components/icon.js';
 import { TimestampView } from './views/TimestampView.js';
 import { JsonView } from './views/JsonView.js';
 import { RsaKeyView } from './views/RsaKeyView.js';
@@ -18,24 +22,7 @@ import { GuidView } from './views/GuidView.js';
 import { HttpView } from './views/HttpView.js';
 import { Base64View } from './views/Base64View.js';
 
-const IconChevronDown = {
-    props: { size: { type: Number, default: 16 } },
-    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
-};
 
-const NavIcon = {
-    props: { icon: String, size: { type: Number, default: 18 } },
-    template: `
-        <span v-if="isHashIcon" class="flex items-center justify-center" :style="{ width: size + 'px', height: size + 'px' }">
-            <IconHash :size="size" />
-        </span>
-        <span v-else class="icon-emoji" style="font-size: 18px; line-height: 1;">{{ icon }}</span>
-    `,
-    computed: {
-        isHashIcon() { return this.icon === '#'; }
-    },
-    components: { IconHash }
-};
 
 const { createApp, ref, computed, inject, onMounted, onBeforeUnmount } = Vue;
 const { createRouter, createWebHashHistory, useRoute, useRouter } = VueRouter;
@@ -43,35 +30,35 @@ const { createRouter, createWebHashHistory, useRoute, useRouter } = VueRouter;
 const ThemeSymbol = Symbol('theme');
 
 const navItems = [
-    { route: '/timestamp', label: '时间戳', icon: '⏰' },
+    { route: '/timestamp', label: '时间戳', icon: 'clock' },
     { 
         label: '文本工具', 
-        icon: '✏️',
+        icon: 'edit',
         children: [
-            { route: '/json', label: 'JSON工具', icon: '📄' },
-            { route: '/encoding', label: '编码转换', icon: '🔠' },
-            { route: '/base64', label: '文件Base64', icon: '📦' },
-            { route: '/string', label: '字符串', icon: '📝' },
-            { route: '/regex', label: '正则测试', icon: '🔍' },
+            { route: '/json', label: 'JSON工具', icon: 'document' },
+            { route: '/encoding', label: '编码转换', icon: 'type' },
+            { route: '/base64', label: '文件Base64', icon: 'package' },
+            { route: '/string', label: '字符串', icon: 'text' },
+            { route: '/regex', label: '正则测试', icon: 'search' },
         ],
         group: 'text'
     },
     { 
         label: '加密安全', 
-        icon: '🔐',
+        icon: 'shield',
         children: [
-            { route: '/rsa-key', label: 'RSA密钥', icon: '🔑' },
-            { route: '/rsa', label: 'RSA', icon: '🔒' },
-            { route: '/aes', label: 'AES', icon: '🔐' },
-            { route: '/des', label: 'DES', icon: '🔏' },
-            { route: '/tripledes', label: '3DES', icon: '🗝️' },
-            { route: '/hash', label: '哈希', icon: '#' },
-            { route: '/jwt', label: 'JWT', icon: '🔑' },
+            { route: '/rsa-key', label: 'RSA密钥', icon: 'key' },
+            { route: '/rsa', label: 'RSA', icon: 'lock' },
+            { route: '/aes', label: 'AES', icon: 'shield' },
+            { route: '/des', label: 'DES', icon: 'unlock' },
+            { route: '/tripledes', label: '3DES', icon: 'key' },
+            { route: '/hash', label: '哈希', icon: 'hash' },
+            { route: '/jwt', label: 'JWT', icon: 'key' },
         ],
         group: 'security'
     },
-    { route: '/guid', label: 'GUID', icon: '🆔' },
-    { route: '/http', label: 'HTTP', icon: '🌐' },
+    { route: '/guid', label: 'GUID', icon: 'id' },
+    { route: '/http', label: 'HTTP', icon: 'globe' },
 ];
 
 const ThemePlugin = {
@@ -169,7 +156,7 @@ const App = {
             <main class="flex-1 overflow-y-auto">
                 <router-view v-slot="{ Component }">
                     <keep-alive>
-                        <component :is="Component" ref="currentViewRef" class="relative p-4 sm:p-6" />
+                        <component :is="Component" ref="currentViewRef" class="relative h-full" />
                     </keep-alive>
                 </router-view>
             </main>
@@ -307,6 +294,8 @@ app.component('IconMenu', IconMenu);
 app.component('IconClose', IconClose);
 app.component('IconSun', IconSun);
 app.component('IconMoon', IconMoon);
+app.component('IconChevronDown', IconChevronDown);
+app.component('NavIcon', NavIcon);
 app.component('IconPlus', {
     props: { size: { type: Number, default: 16 } },
     template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'

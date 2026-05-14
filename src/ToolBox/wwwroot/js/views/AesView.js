@@ -1,67 +1,78 @@
+const { ref } = Vue;
+
 export const AesView = {
     template: `
-    <div class="space-y-3">
-        <div class="space-y-2">
-            <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
-            <input type="text" v-model="aesKey" placeholder="输入AES密钥"
-                class="w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"
-            >
-        </div>
-        <div v-if="aesMode !== 'ECB'" class="space-y-2">
-            <label class="block text-xs font-medium text-[var(--text-secondary)]">IV(必需)</label>
-            <input type="text" v-model="aesIv" placeholder="输入IV"
-                class="w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"
-            >
-        </div>
-        <div class="space-y-2">
-            <label class="block text-xs font-medium text-[var(--text-secondary)]">模式</label>
-            <FSingleSelect v-model="aesMode" :options="[{value:'CBC',label:'CBC'},{value:'ECB',label:'ECB'},{value:'CFB',label:'CFB'}]" />
-        </div>
-        <div class="space-y-2">
-            <label class="block text-xs font-medium text-[var(--text-secondary)]">填充</label>
-            <FSingleSelect v-model="aesPadding" :options="[{value:'PKCS7',label:'PKCS7'},{value:'Zeros',label:'Zeros'},{value:'ANSIX923',label:'ANSIX923'},{value:'ISO10126',label:'ISO10126'},{value:'None',label:'None'}]" />
-        </div>
-        <div class="space-y-2">
-            <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
-            <textarea v-model="aesInput" placeholder="输入明文或密文..."
-                class="min-h-32 w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-y hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"
-            ></textarea>
-        </div>
-        <div class="flex gap-2">
-            <FButton type="primary" size="sm" @click="aesEncrypt">加密</FButton>
-            <FButton type="default" size="sm" @click="aesDecrypt">解密</FButton>
-        </div>
-        <div class="space-y-2">
-            <div class="flex items-center justify-between">
-                <label class="block text-xs font-medium text-[var(--text-secondary)]">输出</label>
-                <CopyButton v-if="aesResult" :text="aesResult" />
+    <div class="h-full flex flex-col gap-4 p-4">
+        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
+            <div class="flex flex-col gap-2">
+                <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
+                <input type="text" v-model="key" placeholder="输入AES密钥"
+                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
             </div>
-            <textarea v-model="aesResult" readonly placeholder="结果将在此显示..."
-                class="min-h-32 w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-y"
-            ></textarea>
+            <div v-if="mode !== 'ECB'" class="flex flex-col gap-2">
+                <label class="block text-xs font-medium text-[var(--text-secondary)]">IV(必需)</label>
+                <input type="text" v-model="iv" placeholder="输入IV"
+                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="block text-xs font-medium text-[var(--text-secondary)]">模式</label>
+                <FSingleSelect v-model="mode" :options="[{value:'CBC',label:'CBC'},{value:'ECB',label:'ECB'},{value:'CFB',label:'CFB'}]"></FSingleSelect>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label class="block text-xs font-medium text-[var(--text-secondary)]">填充</label>
+                <FSingleSelect v-model="padding" :options="[{value:'PKCS7',label:'PKCS7'},{value:'Zeros',label:'Zeros'},{value:'ANSIX923',label:'ANSIX923'},{value:'ISO10126',label:'ISO10126'},{value:'None',label:'None'}]"></FSingleSelect>
+            </div>
+            <div class="flex-1 min-h-0 flex flex-col gap-2">
+                <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
+                <textarea v-model="input" placeholder="输入明文或密文..."
+                    class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
+            </div>
+            <div class="flex gap-2">
+                <FButton type="primary" @click="encrypt">加密</FButton>
+                <FButton type="default" @click="decrypt">解密</FButton>
+            </div>
+            <div v-if="result" class="flex flex-col gap-2 flex-1 min-h-0">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">输出</label>
+                    <CopyButton :text="result"></CopyButton>
+                </div>
+                <textarea v-model="result" readonly placeholder="结果将在此显示..."
+                    class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
+            </div>
         </div>
     </div>
     `,
-    data() {
-        return {
-            aesKey: '', aesIv: '', aesInput: '', aesResult: '', aesMode: 'CBC', aesPadding: 'PKCS7'
-        };
-    },
-    methods: {
-        async aesEncrypt() {
+    setup() {
+        const key = ref('');
+        const iv = ref('');
+        const input = ref('');
+        const result = ref('');
+        const mode = ref('CBC');
+        const padding = ref('PKCS7');
+
+        const encrypt = async () => {
             try {
-                const res = await api('POST', '/encryption/aes/encrypt', { plaintext: this.aesInput, key: this.aesKey, iv: this.aesIv || null, mode: this.aesMode, padding: this.aesPadding });
-                this.aesResult = res.data;
+                const res = await api('POST', '/encryption/aes/encrypt', { plaintext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
+                result.value = res.data;
             } catch(e) { alert('加密失败: ' + e.message); }
-        },
-        async aesDecrypt() {
+        };
+
+        const decrypt = async () => {
             try {
-                const res = await api('POST', '/encryption/aes/decrypt', { ciphertext: this.aesInput, key: this.aesKey, iv: this.aesIv || null, mode: this.aesMode, padding: this.aesPadding });
-                this.aesResult = res.data;
+                const res = await api('POST', '/encryption/aes/decrypt', { ciphertext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
+                result.value = res.data;
             } catch(e) { alert('解密失败: ' + e.message); }
-        },
-        refresh() {
-            this.aesKey = ''; this.aesIv = ''; this.aesInput = ''; this.aesResult = ''; this.aesMode = 'CBC'; this.aesPadding = 'PKCS7';
-        }
+        };
+
+        const refresh = () => {
+            key.value = '';
+            iv.value = '';
+            input.value = '';
+            result.value = '';
+            mode.value = 'CBC';
+            padding.value = 'PKCS7';
+        };
+
+        return { key, iv, input, result, mode, padding, encrypt, decrypt, refresh };
     }
 };

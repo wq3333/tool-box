@@ -1,221 +1,97 @@
-import { IconFile, IconDownload } from '../components/icon.js';
-import { CopyButton } from '../components/CopyButton.js';
-import { FInput } from '../components/FInput.js';
-
-const { ref } = Vue;
+const { ref, onMounted } = Vue;
 
 export const Base64View = {
-    name: 'Base64View',
     template: `
-    <div class="space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <label class="text-sm font-medium text-[var(--text-secondary)]">文件转Base64</label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" v-model="addPrefix" class="w-4 h-4 rounded text-[var(--accent)] border-[var(--border-subtle)] focus:ring-[var(--accent-subtle)]">
-                        <span class="text-xs text-[var(--text-tertiary)]">添加前缀</span>
-                    </label>
+    <div class="h-full flex flex-col gap-4 p-4">
+        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
+            <div class="flex-none grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">操作</label>
+                    <FSingleSelect v-model="mode" :options="[{value:'encode',label:'编码'},{value:'decode',label:'解码'}]"></FSingleSelect>
                 </div>
-                
-                <div class="relative border-2 border-dashed border-[var(--border-subtle)] rounded-lg p-8 text-center hover:border-[var(--border-strong)] transition-colors cursor-pointer"
-                    @click="triggerFileInput"
-                    @dragover.prevent
-                    @drop.prevent="handleDrop">
-                    <input ref="fileInputRef" type="file" class="hidden" @change="handleFileSelect">
-                    <IconUpload class="mx-auto mb-2 text-[var(--text-tertiary)]" :size="32" />
-                    <p class="text-sm text-[var(--text-secondary)]">点击或拖拽文件到此处</p>
-                    <p v-if="selectedFile" class="text-xs text-[var(--accent)] mt-2">{{ selectedFile.name }}</p>
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">换行</label>
+                    <FSingleSelect v-model="lineBreak" :options="[{value:'None',label:'不换行'},{value:'76',label:'76字符'},{value:'64',label:'64字符'}]"></FSingleSelect>
                 </div>
-
-                <FButton v-if="selectedFile" type="primary" @click="convertFileToBase64" :loading="converting">
-                    {{ converting ? '转换中...' : '转换为Base64' }}
-                </FButton>
-
-                <div v-if="fileBase64" class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-[var(--text-tertiary)]">转换结果</span>
-                        <CopyButton :text="fileBase64" />
-                    </div>
-                    <textarea 
-                        :value="fileBase64" 
-                        readonly 
-                        class="w-full h-32 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] resize-y outline-none"
-                    ></textarea>
-                </div>
-
-                <div v-if="imagePreview" class="space-y-2">
-                    <span class="text-xs text-[var(--text-tertiary)]">图片预览</span>
-                    <img :src="imagePreview" class="max-w-full max-h-48 object-contain rounded border border-[var(--border-subtle)]" />
+                <div class="flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">编码</label>
+                    <FSingleSelect v-model="charset" :options="charsetOptions"></FSingleSelect>
                 </div>
             </div>
-
-            <div class="space-y-3">
-                <label class="text-sm font-medium text-[var(--text-secondary)]">Base64转文件</label>
-                
-                <textarea 
-                    v-model="base64Input" 
-                    placeholder="粘贴Base64编码..."
-                    class="w-full h-40 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] resize-y outline-none placeholder:text-[var(--text-tertiary)]"
-                ></textarea>
-
-                <div class="flex gap-2">
-                    <FInput v-model="fileName" placeholder="文件名（含扩展名）" class="flex-1" />
-                    <FButton type="primary" @click="downloadFile" :disabled="!base64Input || !fileName">
-                        <IconDownload :size="14" />
-                        下载文件
-                    </FButton>
+            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-2 flex-1 min-h-0">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
+                        <div class="flex gap-1">
+                            <button @click="fileInputEnc.click()" class="px-2 py-1 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded flex items-center gap-1">
+                                <span>📁</span>文件
+                            </button>
+                            <input type="file" ref="fileInputEnc" @change="onFileEnc($event)" class="hidden">
+                        </div>
+                    </div>
+                    <textarea v-model="input" placeholder="输入文本..."
+                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
-
-                <div v-if="inputImagePreview" class="space-y-2">
-                    <span class="text-xs text-[var(--text-tertiary)]">输入预览</span>
-                    <img :src="inputImagePreview" class="max-w-full max-h-48 object-contain rounded border border-[var(--border-subtle)]" />
+                <div class="flex flex-col gap-2 flex-1 min-h-0">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输出</label>
+                        <CopyButton v-if="result" :text="result"></CopyButton>
+                    </div>
+                    <textarea v-model="result" readonly placeholder="结果..."
+                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
                 </div>
+            </div>
+            <div class="flex gap-2 flex-none">
+                <FButton type="primary" @click="run">执行</FButton>
+                <FButton type="default" @click="swap">交换</FButton>
             </div>
         </div>
     </div>
     `,
     setup() {
-        const fileInputRef = ref(null);
-        const selectedFile = ref(null);
-        const addPrefix = ref(true);
-        const fileBase64 = ref('');
-        const imagePreview = ref('');
-        const base64Input = ref('');
-        const fileName = ref('');
-        const inputImagePreview = ref('');
-        const converting = ref(false);
+        const mode = ref('encode');
+        const lineBreak = ref('None');
+        const charset = ref('UTF-8');
+        const charsetOptions = ref([]);
+        const input = ref('');
+        const result = ref('');
 
-        const IconUpload = {
-            props: { size: { type: Number, default: 24 } },
-            template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`
+        const run = async () => {
+            try {
+                const res = await api('POST', '/base64/' + mode.value, { input: input.value, lineBreak: lineBreak.value, charset: charset.value });
+                result.value = res.data;
+            } catch(e) { alert('执行失败: ' + e.message); }
         };
 
-        const triggerFileInput = () => {
-            fileInputRef.value?.click();
+        const swap = () => {
+            mode.value = mode.value === 'encode' ? 'decode' : 'encode';
+            [input.value, result.value] = [result.value, input.value];
         };
 
-        const handleFileSelect = (e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-                selectedFile.value = file;
-                fileBase64.value = '';
-                imagePreview.value = '';
-            }
+        const onFileEnc = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const text = await file.text();
+            input.value = text;
         };
-
-        const handleDrop = (e) => {
-            const file = e.dataTransfer?.files?.[0];
-            if (file) {
-                selectedFile.value = file;
-                fileBase64.value = '';
-                imagePreview.value = '';
-            }
-        };
-
-        const convertFileToBase64 = async () => {
-            if (!selectedFile.value) return;
-            
-            converting.value = true;
-            const reader = new FileReader();
-            
-            reader.onload = (e) => {
-                let result = e.target?.result;
-                if (!addPrefix.value) {
-                    result = result.split(',')[1] || result;
-                }
-                fileBase64.value = result;
-                
-                if (selectedFile.value.type.startsWith('image/')) {
-                    imagePreview.value = e.target?.result;
-                } else {
-                    imagePreview.value = '';
-                }
-                converting.value = false;
-            };
-            
-            reader.readAsDataURL(selectedFile.value);
-        };
-
-        const downloadFile = () => {
-            if (!base64Input.value || !fileName.value) return;
-            
-            let data = base64Input.value;
-            if (!data.startsWith('data:')) {
-                const ext = fileName.value.split('.').pop()?.toLowerCase();
-                let mimeType = 'application/octet-stream';
-                if (ext === 'png') mimeType = 'image/png';
-                else if (ext === 'jpg' || ext === 'jpeg') mimeType = 'image/jpeg';
-                else if (ext === 'gif') mimeType = 'image/gif';
-                else if (ext === 'svg') mimeType = 'image/svg+xml';
-                else if (ext === 'pdf') mimeType = 'application/pdf';
-                else if (ext === 'txt') mimeType = 'text/plain';
-                data = `data:${mimeType};base64,${data}`;
-            }
-            
-            const link = document.createElement('a');
-            link.href = data;
-            link.download = fileName.value;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        };
-
-        const checkInputImage = () => {
-            const input = base64Input.value.trim();
-            if (input.startsWith('data:image/')) {
-                inputImagePreview.value = input;
-            } else if (input.length > 100) {
-                const ext = fileName.value.split('.').pop()?.toLowerCase();
-                if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
-                    inputImagePreview.value = `data:image/${ext};base64,${input}`;
-                } else {
-                    inputImagePreview.value = '';
-                }
-            } else {
-                inputImagePreview.value = '';
-            }
-        };
-
-        base64Input.value = '';
-        base64Input.value = '';
 
         const refresh = () => {
-            selectedFile.value = null;
-            fileBase64.value = '';
-            imagePreview.value = '';
-            base64Input.value = '';
-            fileName.value = '';
-            inputImagePreview.value = '';
-            converting.value = false;
+            mode.value = 'encode';
+            lineBreak.value = 'None';
+            charset.value = 'UTF-8';
+            input.value = '';
+            result.value = '';
         };
 
-        return {
-            fileInputRef,
-            selectedFile,
-            addPrefix,
-            fileBase64,
-            imagePreview,
-            base64Input,
-            fileName,
-            inputImagePreview,
-            converting,
-            IconUpload,
-            triggerFileInput,
-            handleFileSelect,
-            handleDrop,
-            convertFileToBase64,
-            downloadFile,
-            checkInputImage,
-            refresh
-        };
-    },
-    watch: {
-        base64Input() {
-            this.checkInputImage();
-        },
-        fileName() {
-            this.checkInputImage();
-        }
+        onMounted(async () => {
+            try {
+                const res = await api('GET', '/encoding/charsets');
+                charsetOptions.value = res.data.map(c => ({ value: c, label: c }));
+            } catch(e) {
+                charsetOptions.value = [{value:'UTF-8',label:'UTF-8'}];
+            }
+        });
+
+        return { mode, lineBreak, charset, charsetOptions, input, result, run, swap, onFileEnc, refresh };
     }
 };
