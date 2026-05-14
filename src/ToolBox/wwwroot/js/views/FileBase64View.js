@@ -1,4 +1,5 @@
 import { IconDownload, IconUpload, IconFile, IconClose } from '../components/icon.js';
+import { toast } from '../components/Toast.js';
 
 const { ref, watch } = Vue;
 
@@ -161,7 +162,7 @@ export const FileBase64View = {
             if (files && files.length > 0) {
                 const file = files[0];
                 if (file.size > maxFileSize) {
-                    alert('文件大小不能超过5MB');
+                    toast.warning('文件大小不能超过5MB');
                     return;
                 }
                 fileName.value = file.name;
@@ -190,7 +191,7 @@ export const FileBase64View = {
             if (!file) return;
 
             if (file.size > maxFileSize) {
-                alert('文件大小不能超过5MB');
+                toast.warning('文件大小不能超过5MB');
                 return;
             }
 
@@ -221,7 +222,7 @@ export const FileBase64View = {
         const execute = () => {
             if (activeTab.value === 'encode') {
                 if (!fileName.value) {
-                    alert('请先选择文件');
+                    toast.warning('请先选择文件');
                     return;
                 }
                 if (fileData.value) {
@@ -238,7 +239,7 @@ export const FileBase64View = {
 
         const executeDecode = () => {
             if (!result.value) {
-                alert('请输入Base64内容或选择包含Base64的文件');
+                toast.warning('请输入Base64内容或选择包含Base64的文件');
                 return;
             }
             try {
@@ -254,7 +255,7 @@ export const FileBase64View = {
                 decodedUrl.value = URL.createObjectURL(decodedBlob.value);
                 isImage.value = mimeType.startsWith('image/');
             } catch (e) {
-                alert('解码失败: ' + e.message);
+                toast.error('解码失败: ' + e.message);
             }
         };
 

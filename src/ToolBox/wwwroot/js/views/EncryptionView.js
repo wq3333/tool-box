@@ -1,4 +1,5 @@
 import { FInput } from '../components/FInput.js';
+import { toast } from '../components/Toast.js';
 
 const { ref, onMounted } = Vue;
 
@@ -664,7 +665,7 @@ export const EncryptionView = {
             try {
                 const res = await api('POST', '/encryption/rsa/generate', { keySize: rsaKeySize.value });
                 rsaKeys.value = res.data;
-            } catch(e) { alert('生成失败: ' + e.message); }
+            } catch(e) { toast.error('生成失败: ' + e.message); }
         };
         const rsaCompare = async () => {
             try {
@@ -676,31 +677,31 @@ export const EncryptionView = {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-pem', { pem: convertPem.value, targetFormat: convertTarget.value });
                 convertResult.value = res.data;
-            } catch(e) { alert('转换失败: ' + e.message); }
+            } catch(e) { toast.error('转换失败: ' + e.message); }
         };
         const aesEncrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/aes/encrypt', { plaintext: aesInput.value, key: aesKey.value, iv: aesIv.value || null, mode: aesMode.value, padding: aesPadding.value });
                 aesResult.value = res.data;
-            } catch(e) { alert('加密失败: ' + e.message); }
+            } catch(e) { toast.error('加密失败: ' + e.message); }
         };
         const aesDecrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/aes/decrypt', { ciphertext: aesInput.value, key: aesKey.value, iv: aesIv.value || null, mode: aesMode.value, padding: aesPadding.value });
                 aesResult.value = res.data;
-            } catch(e) { alert('解密失败: ' + e.message); }
+            } catch(e) { toast.error('解密失败: ' + e.message); }
         };
         const desEncrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/des/encrypt', { plaintext: desInput.value, key: desKey.value, iv: desIv.value || null, mode: desMode.value, padding: desPadding.value });
                 desResult.value = res.data;
-            } catch(e) { alert('加密失败: ' + e.message); }
+            } catch(e) { toast.error('加密失败: ' + e.message); }
         };
         const desDecrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/des/decrypt', { ciphertext: desInput.value, key: desKey.value, iv: desIv.value || null, mode: desMode.value, padding: desPadding.value });
                 desResult.value = res.data;
-            } catch(e) { alert('解密失败: ' + e.message); }
+            } catch(e) { toast.error('解密失败: ' + e.message); }
         };
         const tripleDesEncrypt = async () => {
             try {

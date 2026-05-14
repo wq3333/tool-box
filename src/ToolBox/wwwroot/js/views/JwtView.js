@@ -1,4 +1,5 @@
 import { FInput } from '../components/FInput.js';
+import { toast } from '../components/Toast.js';
 
 const { ref } = Vue;
 
@@ -178,7 +179,7 @@ export const JwtView = {
             try {
                 const res = await api('POST', '/jwt/sign', { alg: jwtSignAlg.value, key: jwtSignKey.value, header: jwtSignHeader.value, payload: jwtSignPayload.value });
                 jwtSignResult.value = res.data;
-            } catch (e) { alert('签名失败: ' + e.message); }
+            } catch (e) { toast.error('签名失败: ' + e.message); }
         };
 
         const jwtDoVerify = async () => {

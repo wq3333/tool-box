@@ -1,4 +1,5 @@
 import { FInput } from '../components/FInput.js';
+import { toast } from '../components/Toast.js';
 
 const { ref } = Vue;
 
@@ -71,14 +72,14 @@ export const TripleDesView = {
             try {
                 const res = await api('POST', '/encryption/tripledes/encrypt', { plaintext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
                 result.value = res.data;
-            } catch(e) { alert('加密失败: ' + e.message); }
+            } catch(e) { toast.error('加密失败: ' + e.message); }
         };
 
         const decrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/tripledes/decrypt', { ciphertext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
                 result.value = res.data;
-            } catch(e) { alert('解密失败: ' + e.message); }
+            } catch(e) { toast.error('解密失败: ' + e.message); }
         };
 
         const refresh = () => {

@@ -2,6 +2,7 @@ import { FInput } from './components/FInput.js';
 import { FButton } from './components/FButton.js';
 import { FSingleSelect } from './components/FSingleSelect.js';
 import { CopyButton } from './components/CopyButton.js';
+import { ToastContainer, ToastPlugin } from './components/Toast.js';
 import { 
     IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash, IconChevronDown, NavIcon,
     IconClock, IconEdit, IconDocument, IconText, IconType, IconSearch, IconShield,
@@ -82,9 +83,10 @@ const ThemePlugin = {
 };
 
 const App = {
-    components: { FButton, IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconChevronDown, NavIcon },
+    components: { FButton, IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconChevronDown, NavIcon, ToastContainer },
     template: `
     <div class="flex h-full overflow-hidden">
+        <ToastContainer />
         <div v-if="mobileOpen && isMobile" class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-200" :class="mobileOpen ? 'opacity-100' : 'opacity-0'" @click="mobileOpen = false"></div>
         <aside class="sidebar bg-[var(--bg-surface)] border-r border-[var(--border-subtle)] flex flex-col shrink-0 z-30"
             :class="{
@@ -288,6 +290,7 @@ const router = createRouter({
 const app = createApp(App);
 app.use(ThemePlugin);
 app.use(router);
+app.use(ToastPlugin);
 app.component('FInput', FInput);
 app.component('FButton', FButton);
 app.component('FSingleSelect', FSingleSelect);

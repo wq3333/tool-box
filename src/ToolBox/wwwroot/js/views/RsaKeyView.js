@@ -1,9 +1,10 @@
-import { FInput } from '../components/FInput.js';
+import { IconRefresh, IconDiff, IconArrowRight, IconUser, IconLockAlt } from '../components/icon.js';
+import { toast } from '../components/Toast.js';
 
 const { ref, onMounted } = Vue;
 
 export const RsaKeyView = {
-    components: { FInput },
+    components: { IconRefresh, IconDiff, IconArrowRight, IconUser, IconLockAlt },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-none">
@@ -23,9 +24,7 @@ export const RsaKeyView = {
                 <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">密钥长度</label>
                 <FSingleSelect v-model="rsaKeySize" :options="[{value:2048,label:'2048'},{value:4096,label:'4096'}]"></FSingleSelect>
                 <FButton type="primary" @click="rsaGenerate" class="flex-1 lg:flex-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
+                    <IconRefresh :size="20" />
                     生成密钥对
                 </FButton>
             </div>
@@ -63,9 +62,7 @@ export const RsaKeyView = {
                 </div>
             </div>
             <FButton type="primary" @click="rsaCompare" class="w-full py-3 text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <IconDiff :size="20" />
                 比对
             </FButton>
             <div class="px-4 py-3 border rounded-lg flex items-center justify-center flex-shrink-0"
@@ -97,9 +94,7 @@ export const RsaKeyView = {
                 <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">目标格式</label>
                 <FSingleSelect v-model="convertTarget" :options="[{value:'pkcs1',label:'PKCS#1'},{value:'pkcs8',label:'PKCS#8'},{value:'public',label:'公钥(X.509)'}]"></FSingleSelect>
                 <FButton type="primary" @click="rsaConvertPem" class="flex-1 lg:flex-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
+                    <IconArrowRight :size="20" />
                     转换
                 </FButton>
             </div>
@@ -130,9 +125,7 @@ export const RsaKeyView = {
                     <span class="text-sm text-slate-600">包含私钥参数</span>
                 </div>
                 <FButton type="primary" @click="rsaConvertToXml" class="w-full py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
+                    <IconArrowRight :size="20" />
                     转换为XML
                 </FButton>
                 <div class="flex flex-col gap-3 flex-1 min-h-0">
@@ -156,9 +149,7 @@ export const RsaKeyView = {
                     </div>
                 </div>
                 <FButton type="primary" @click="rsaConvertFromXml" class="w-full py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
+                    <IconArrowRight :size="20" />
                     转换为PEM
                 </FButton>
                 <div class="flex flex-col gap-3 flex-1 min-h-0">
@@ -208,9 +199,7 @@ export const RsaKeyView = {
                         <FSingleSelect v-model="rsaPasswordAlgorithm" :options="[{value:'AES-256-CBC',label:'AES-256-CBC'},{value:'DES-EDE3-CBC',label:'DES-EDE3-CBC'}]"></FSingleSelect>
                     </div>
                     <FButton type="primary" @click="rsaAddPassword" class="w-full py-3 text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <IconLockAlt :size="20" />
                         添加密码
                     </FButton>
                 </div>
@@ -236,10 +225,7 @@ export const RsaKeyView = {
                         <FInput v-model="rsaRemovePwd" placeholder="输入密码"></FInput>
                     </div>
                     <FButton type="primary" @click="rsaDoRemovePassword" class="w-full py-3 text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
+                        <IconUser :size="20" />
                         移除密码
                     </FButton>
                 </div>
@@ -293,7 +279,7 @@ export const RsaKeyView = {
             try {
                 const res = await api('POST', '/encryption/rsa/generate', { keySize: rsaKeySize.value });
                 rsaKeys.value = res.data;
-            } catch (e) { alert('生成失败: ' + e.message); }
+            } catch (e) { toast.error('生成失败: ' + e.message); }
         };
 
         const rsaCompare = async () => {
@@ -307,35 +293,35 @@ export const RsaKeyView = {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-pem', { pem: convertPem.value, targetFormat: convertTarget.value });
                 convertResult.value = res.data;
-            } catch (e) { alert('转换失败: ' + e.message); }
+            } catch (e) { toast.error('转换失败: ' + e.message); }
         };
 
         const rsaConvertToXml = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-to-xml', { pem: rsaXmlPem.value, includePrivateParams: rsaXmlIncludePrivate.value });
                 rsaXmlResult.value = res.data;
-            } catch (e) { alert('转换失败: ' + e.message); }
+            } catch (e) { toast.error('转换失败: ' + e.message); }
         };
 
         const rsaConvertFromXml = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-from-xml', { xml: rsaXmlXml.value, targetFormat: rsaXmlTargetFormat.value });
                 rsaXmlFromXmlResult.value = res.data;
-            } catch (e) { alert('转换失败: ' + e.message); }
+            } catch (e) { toast.error('转换失败: ' + e.message); }
         };
 
         const rsaAddPassword = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/add-password', { pem: rsaPasswordPem.value, password: rsaPasswordPassword.value, targetEncryptedType: rsaPasswordTargetEncryptedType.value, algorithm: rsaPasswordAlgorithm.value });
                 rsaPasswordResult.value = res.data;
-            } catch (e) { alert('添加密码失败: ' + e.message); }
+            } catch (e) { toast.error('添加密码失败: ' + e.message); }
         };
 
         const rsaDoRemovePassword = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/remove-password', { pem: rsaRemoveEncryptedPem.value, password: rsaRemovePwd.value });
                 rsaRemoveResult.value = res.data;
-            } catch (e) { alert('移除密码失败: ' + e.message); }
+            } catch (e) { toast.error('移除密码失败: ' + e.message); }
         };
 
         const refresh = () => {
