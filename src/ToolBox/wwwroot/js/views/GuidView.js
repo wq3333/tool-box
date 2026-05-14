@@ -1,6 +1,9 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, onMounted } = Vue;
 
 export const GuidView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-4">
@@ -35,8 +38,7 @@ export const GuidView = {
 
                 <div class="flex flex-col lg:flex-row lg:items-center gap-3">
                     <label class="text-xs text-[var(--text-secondary)]">生成数量</label>
-                    <input type="number" v-model.number="count" min="1" max="100"
-                        class="w-24 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs text-[var(--text-primary)] outline-none hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                    <FInput type="number" v-model.number="count" class="w-24" min="1" max="100"></FInput>
                     <FButton type="primary" @click="generate">生成</FButton>
                 </div>
 

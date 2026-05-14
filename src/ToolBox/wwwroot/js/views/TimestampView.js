@@ -1,13 +1,15 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, onMounted } = Vue;
 
 export const TimestampView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
                 <label class="text-sm font-medium text-[var(--text-secondary)]">日期时间</label>
-                <input type="datetime-local" v-model="datetime"
-                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                <FInput type="datetime-local" v-model="datetime"></FInput>
                 <FButton type="primary" @click="toUnix">转为时间戳</FButton>
                 <div v-if="unixResult" class="flex flex-col gap-2 flex-1 min-h-0">
                     <div class="flex items-center gap-2">
@@ -37,8 +39,7 @@ export const TimestampView = {
                         </label>
                     </div>
                 </div>
-                <input type="text" v-model="timestamp" placeholder="输入时间戳（秒或毫秒）"
-                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                <FInput v-model="timestamp" placeholder="输入时间戳（秒或毫秒）"></FInput>
                 <FButton type="primary" @click="toDatetime">转为日期时间</FButton>
                 <div v-if="datetimeResult" class="flex flex-col gap-2 flex-1 min-h-0">
                     <div class="flex items-center gap-2">

@@ -1,90 +1,222 @@
-const { ref } = Vue;
+const { ref, computed } = Vue;
 
 export const RsaView = {
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
-        <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
-            <div class="flex flex-col gap-2 flex-none">
-                <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
-                <textarea v-model="key" placeholder="粘贴公钥(加密)或私钥(解密)..."
-                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]" rows="3"></textarea>
+        <div class="flex-none">
+            <div class="hidden lg:flex gap-1 border-b border-[var(--border-subtle)] pb-3">
+                <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
+                    :class="['px-4 py-2 text-sm rounded transition-colors',
+                            activeTab === tab.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                    {{ tab.label }}
+                </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-none">
+            <div class="lg:hidden">
+                <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
+                <FSingleSelect v-model="activeTab" :options="tabs.map(t => ({ value: t.key, label: t.label }))"></FSingleSelect>
+            </div>
+        </div>
+
+        <div class="flex-none">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div class="flex flex-col gap-2">
-                    <label class="block text-xs font-medium text-[var(--text-secondary)]">加密方式</label>
-                    <FSingleSelect v-model="rsaEncoding" :options="[{value:'base64',label:'Base64'},{value:'hex',label:'Hex'}]"></FSingleSelect>
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">编码方式</label>
+                    <FSingleSelect v-model="rsaEncoding" :options="encodingOptions"></FSingleSelect>
                 </div>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2" v-if="activeTab === 'encrypt' || activeTab === 'decrypt'">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">填充方式</label>
-                    <FSingleSelect v-model="rsaPadding" :options="[{value:'Pkcs1',label:'PKCS#1'},{value:'OaepSHA1',label:'OAEP SHA-1'},{value:'OaepSHA256',label:'OAEP SHA-256'},{value:'OaepSHA384',label:'OAEP SHA-384'},{value:'OaepSHA512',label:'OAEP SHA-512'}]"></FSingleSelect>
+                    <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
+                </div>
+                <div class="flex flex-col gap-2" v-if="activeTab === 'sign' || activeTab === 'verify'">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">哈希算法</label>
+                    <FSingleSelect v-model="hashAlgorithm" :options="hashOptions"></FSingleSelect>
                 </div>
             </div>
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
-                        <div class="flex gap-1">
-                            <button @click="fileInputEnc.click()" class="px-2 py-1 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded flex items-center gap-1">
-                                <span>📁</span>文件
-                            </button>
-                            <input type="file" ref="fileInputEnc" @change="onFileEnc($event)" class="hidden">
-                        </div>
-                    </div>
-                    <textarea v-model="input" placeholder="输入文本..."
+        </div>
+
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
+            <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
+                <div class="flex-1 min-h-0 flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">{{ inputLabel }}</label>
+                    <textarea v-model="currentInput" :placeholder="inputPlaceholder"
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
-                <div class="flex flex-col gap-2 flex-1 min-h-0">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-xs font-medium text-[var(--text-secondary)]">输出</label>
-                        <CopyButton v-if="result" :text="result"></CopyButton>
-                    </div>
-                    <textarea v-model="result" readonly placeholder="结果..."
-                        class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
-                </div>
             </div>
-            <div class="flex gap-2 flex-none">
-                <FButton type="primary" @click="encrypt">加密</FButton>
-                <FButton type="default" @click="decrypt">解密</FButton>
+
+            <div class="flex flex-col gap-2 self-center w-40">
+                <div class="flex-1 flex flex-col gap-2">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
+                    <textarea v-model="key" placeholder="粘贴密钥..."
+                        class="h-32 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)]"></textarea>
+                </div>
+                <FButton type="primary" @click="execute">{{ executeLabel }}</FButton>
+            </div>
+
+            <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
+                    <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
+                </div>
+                <textarea v-model="currentOutput" readonly :placeholder="outputPlaceholder"
+                    class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)]"></textarea>
             </div>
         </div>
     </div>
     `,
     setup() {
-        const key = ref('');
+        const activeTab = ref('encrypt');
+        const tabs = [
+            { key: 'encrypt', label: '加密' },
+            { key: 'decrypt', label: '解密' },
+            { key: 'sign', label: '签名' },
+            { key: 'verify', label: '验签' }
+        ];
         const rsaEncoding = ref('base64');
         const rsaPadding = ref('Pkcs1');
+        const hashAlgorithm = ref('SHA256');
+        const key = ref('');
         const input = ref('');
-        const result = ref('');
+        const output = ref('');
 
-        const encrypt = async () => {
+        const encodingOptions = [
+            { value: 'base64', label: 'Base64' },
+            { value: 'hex', label: 'Hex' }
+        ];
+
+        const paddingOptions = [
+            { value: 'Pkcs1', label: 'PKCS#1' },
+            { value: 'OaepSHA1', label: 'OAEP SHA-1' },
+            { value: 'OaepSHA256', label: 'OAEP SHA-256' },
+            { value: 'OaepSHA384', label: 'OAEP SHA-384' },
+            { value: 'OaepSHA512', label: 'OAEP SHA-512' }
+        ];
+
+        const hashOptions = [
+            { value: 'SHA1', label: 'SHA-1' },
+            { value: 'SHA256', label: 'SHA-256' },
+            { value: 'SHA384', label: 'SHA-384' },
+            { value: 'SHA512', label: 'SHA-512' }
+        ];
+
+        const currentInput = computed({
+            get() { return input.value; },
+            set(v) { input.value = v; }
+        });
+
+        const currentOutput = computed({
+            get() { return output.value; },
+            set(v) { output.value = v; }
+        });
+
+        const inputLabel = computed(() => {
+            return {
+                encrypt: '明文',
+                decrypt: '密文',
+                sign: '待签名数据',
+                verify: '原始数据'
+            }[activeTab.value];
+        });
+
+        const inputPlaceholder = computed(() => {
+            return {
+                encrypt: '输入要加密的明文...',
+                decrypt: '输入要解密的密文...',
+                sign: '输入要签名的数据...',
+                verify: '输入原始数据...'
+            }[activeTab.value];
+        });
+
+        const outputPlaceholder = computed(() => {
+            return {
+                encrypt: '加密结果...',
+                decrypt: '解密结果...',
+                sign: '签名结果...',
+                verify: '验签结果...'
+            }[activeTab.value];
+        });
+
+        const executeLabel = computed(() => {
+            return {
+                encrypt: '加密',
+                decrypt: '解密',
+                sign: '签名',
+                verify: '验签'
+            }[activeTab.value];
+        });
+
+        const execute = async () => {
+            if (!key.value.trim()) {
+                output.value = '请输入密钥';
+                return;
+            }
+            if (!input.value.trim()) {
+                output.value = '请输入数据';
+                return;
+            }
+
             try {
-                const res = await api('POST', '/encryption/rsa/encrypt', { text: input.value, pem: key.value, encoding: rsaEncoding.value, padding: rsaPadding.value });
-                result.value = res.data;
-            } catch(e) { alert('加密失败: ' + e.message); }
-        };
-
-        const decrypt = async () => {
-            try {
-                const res = await api('POST', '/encryption/rsa/decrypt', { cipherText: input.value, pem: key.value, encoding: rsaEncoding.value, padding: rsaPadding.value });
-                result.value = res.data;
-            } catch(e) { alert('解密失败: ' + e.message); }
-        };
-
-        const onFileEnc = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const text = await file.text();
-            input.value = text;
+                let res;
+                switch (activeTab.value) {
+                    case 'encrypt':
+                        res = await api('POST', '/encryption/rsa/encrypt', {
+                            text: input.value,
+                            pem: key.value,
+                            encoding: rsaEncoding.value,
+                            padding: rsaPadding.value
+                        });
+                        output.value = res.data;
+                        break;
+                    case 'decrypt':
+                        res = await api('POST', '/encryption/rsa/decrypt', {
+                            cipherText: input.value,
+                            pem: key.value,
+                            encoding: rsaEncoding.value,
+                            padding: rsaPadding.value
+                        });
+                        output.value = res.data;
+                        break;
+                    case 'sign':
+                        res = await api('POST', '/encryption/rsa/sign', {
+                            text: input.value,
+                            pem: key.value,
+                            encoding: rsaEncoding.value,
+                            hashAlgorithm: hashAlgorithm.value
+                        });
+                        output.value = res.data;
+                        break;
+                    case 'verify':
+                        const signature = prompt('请输入签名');
+                        if (!signature) return;
+                        res = await api('POST', '/encryption/rsa/verify', {
+                            text: input.value,
+                            pem: key.value,
+                            signature: signature,
+                            encoding: rsaEncoding.value,
+                            hashAlgorithm: hashAlgorithm.value
+                        });
+                        output.value = res.data ? '✓ 签名验证通过' : '✗ 签名验证失败';
+                        break;
+                }
+            } catch (e) {
+                output.value = '操作失败: ' + e.message;
+            }
         };
 
         const refresh = () => {
-            key.value = '';
+            activeTab.value = 'encrypt';
             rsaEncoding.value = 'base64';
             rsaPadding.value = 'Pkcs1';
+            hashAlgorithm.value = 'SHA256';
+            key.value = '';
             input.value = '';
-            result.value = '';
+            output.value = '';
         };
 
-        return { key, rsaEncoding, rsaPadding, input, result, encrypt, decrypt, onFileEnc, refresh };
+        return {
+            activeTab, tabs, rsaEncoding, rsaPadding, hashAlgorithm, key,
+            currentInput, currentOutput, inputLabel, inputPlaceholder, outputPlaceholder, executeLabel,
+            encodingOptions, paddingOptions, hashOptions,
+            execute, refresh
+        };
     }
 };

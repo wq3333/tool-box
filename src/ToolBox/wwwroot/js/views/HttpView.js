@@ -1,6 +1,9 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, computed } = Vue;
 
 export const HttpView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-none flex items-center justify-between">
@@ -14,8 +17,7 @@ export const HttpView = {
         <div class="flex-1 min-h-0 flex flex-col gap-4">
             <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
                 <FSingleSelect v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
-                <input type="text" v-model="url" placeholder="https://example.com/api"
-                    class="flex-1 px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
                 <FButton @click="send" type="primary" :loading="loading">{{ loading ? '请求中...' : '发送' }}</FButton>
             </div>
 
@@ -31,10 +33,8 @@ export const HttpView = {
                         </div>
                         <div class="flex flex-col gap-2 max-h-[120px] overflow-y-auto">
                             <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
-                                <input type="text" v-model="h.key" placeholder="键"
-                                    class="flex-1 min-w-[80px] px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
-                                <input type="text" v-model="h.value" placeholder="值"
-                                    class="flex-1 min-w-[80px] px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                                <FInput v-model="h.key" placeholder="键" class="flex-1 min-w-[80px]"></FInput>
+                                <FInput v-model="h.value" placeholder="值" class="flex-1 min-w-[80px]"></FInput>
                                 <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--danger)] hover:bg-[var(--bg-hover)] rounded transition-colors flex-shrink-0">
                                     <IconTrash :size="14" />
                                 </button>
@@ -53,8 +53,7 @@ export const HttpView = {
                                 <div v-for="(f, i) in formFields" :key="i" class="flex gap-2 items-center">
                                     <FSingleSelect v-if="contentType === 'multipart/form-data'" v-model="f.type" class="flex-shrink-0"
                                         :options="[{value:'text',label:'文本'},{value:'file',label:'文件'}]"></FSingleSelect>
-                                    <input type="text" v-model="f.key" placeholder="字段名"
-                                        class="flex-1 min-w-[80px] px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                                    <FInput v-model="f.key" placeholder="字段名" class="flex-1 min-w-[80px]"></FInput>
                                     <input v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" type="text" v-model="f.value" placeholder="字段值"
                                         class="flex-1 min-w-[80px] px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
                                     <input v-else type="file" :ref="el => { if (el) f.fileRef = el }"

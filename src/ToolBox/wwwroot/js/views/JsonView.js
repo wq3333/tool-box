@@ -1,6 +1,9 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, computed } = Vue;
 
 export const JsonView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-none">
@@ -17,24 +20,25 @@ export const JsonView = {
             </div>
         </div>
 
-        <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
             <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-2">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">{{ inputLabel }}</label>
                     <textarea v-model="currentInput" :placeholder="inputPlaceholder"
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
+            </div>
 
+            <div class="flex flex-col gap-2 self-center w-40">
                 <div v-if="activeTab === 'to-csharp'" class="flex items-center gap-2">
-                    <label class="text-xs text-[var(--text-secondary)]">根类名:</label>
-                    <input type="text" v-model="rootName" placeholder="Root"
-                        class="w-32 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                    <label class="text-xs text-[var(--text-secondary)] whitespace-nowrap">根类名:</label>
+                    <FInput v-model="rootName" placeholder="Root" class="w-32"></FInput>
                 </div>
 
                 <FButton type="primary" @click="execute">{{ executeLabel }}</FButton>
             </div>
 
-            <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
                     <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>

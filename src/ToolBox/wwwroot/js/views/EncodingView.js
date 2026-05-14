@@ -17,17 +17,18 @@ export const EncodingView = {
             </div>
         </div>
 
-        <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
             <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-2">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">输入</label>
                     <textarea v-model="currentInput" :placeholder="inputPlaceholder"
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
-                <div class="flex gap-2">
-                    <FButton type="primary" @click="encode">{{ encodeLabel }}</FButton>
-                    <FButton type="default" @click="decode">{{ decodeLabel }}</FButton>
-                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 self-center w-40">
+                <FButton type="primary" @click="encode">{{ encodeLabel }}</FButton>
+                <FButton type="success" @click="decode">{{ decodeLabel }}</FButton>
             </div>
 
             <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3 flex-1 min-h-0">

@@ -1,19 +1,22 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, onMounted } = Vue;
 
 export const RsaKeyView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-none">
             <div class="hidden lg:flex gap-1 border-b border-[var(--border-subtle)] pb-2">
                 <button v-for="t in rsaTabs" :key="t.key" @click="rsaTab = t.key"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            rsaTab === t.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        rsaTab === t.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     {{ t.label }}
                 </button>
             </div>
             <div class="lg:hidden">
                 <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
-                <FSingleSelect v-model="rsaTab" :options="rsaTabs.map(t => ({ value: t.key, label: t.label }))"></FSingleSelect>
+                <FSingleSelect v-model="rsaTab" :options="rsaTabs.map(t => ({value: t.key, label: t.label}))"></FSingleSelect>
             </div>
         </div>
 
@@ -93,12 +96,12 @@ export const RsaKeyView = {
             <div class="flex gap-1 border-b border-[var(--border-subtle)] pb-2">
                 <button @click="xmlConvertDirection = 'pem-to-xml'"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            xmlConvertDirection === 'pem-to-xml' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        xmlConvertDirection === 'pem-to-xml' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     PEM → XML
                 </button>
                 <button @click="xmlConvertDirection = 'xml-to-pem'"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            xmlConvertDirection === 'xml-to-pem' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        xmlConvertDirection === 'xml-to-pem' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     XML → PEM
                 </button>
             </div>
@@ -150,12 +153,12 @@ export const RsaKeyView = {
             <div class="flex gap-1 border-b border-[var(--border-subtle)] pb-2">
                 <button @click="passwordOperation = 'add'"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            passwordOperation === 'add' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        passwordOperation === 'add' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     添加密码
                 </button>
                 <button @click="passwordOperation = 'remove'"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            passwordOperation === 'remove' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        passwordOperation === 'remove' ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     移除密码
                 </button>
             </div>
@@ -168,8 +171,7 @@ export const RsaKeyView = {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div class="flex flex-col gap-2">
                             <label class="block text-xs font-medium text-[var(--text-secondary)]">密码</label>
-                            <input type="text" v-model="rsaPasswordPassword" placeholder="输入密码"
-                                class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                            <FInput v-model="rsaPasswordPassword" placeholder="输入密码"></FInput>
                         </div>
                         <div class="flex flex-col gap-2">
                             <label class="block text-xs font-medium text-[var(--text-secondary)]">加密类型</label>
@@ -199,8 +201,7 @@ export const RsaKeyView = {
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                     <div class="flex flex-col gap-2">
                         <label class="block text-xs font-medium text-[var(--text-secondary)]">密码</label>
-                        <input type="text" v-model="rsaRemovePwd" placeholder="输入密码"
-                            class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                        <FInput v-model="rsaRemovePwd" placeholder="输入密码"></FInput>
                     </div>
                     <FButton type="primary" @click="rsaDoRemovePassword">移除密码</FButton>
                 </div>
@@ -254,49 +255,49 @@ export const RsaKeyView = {
             try {
                 const res = await api('POST', '/encryption/rsa/generate', { keySize: rsaKeySize.value });
                 rsaKeys.value = res.data;
-            } catch(e) { alert('生成失败: ' + e.message); }
+            } catch (e) { alert('生成失败: ' + e.message); }
         };
 
         const rsaCompare = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/compare', { privateKey: comparePrivate.value, publicKey: comparePublic.value });
                 compareResult.value = res.data;
-            } catch(e) { compareResult.value = false; }
+            } catch (e) { compareResult.value = false; }
         };
 
         const rsaConvertPem = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-pem', { pem: convertPem.value, targetFormat: convertTarget.value });
                 convertResult.value = res.data;
-            } catch(e) { alert('转换失败: ' + e.message); }
+            } catch (e) { alert('转换失败: ' + e.message); }
         };
 
         const rsaConvertToXml = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-to-xml', { pem: rsaXmlPem.value, includePrivateParams: rsaXmlIncludePrivate.value });
                 rsaXmlResult.value = res.data;
-            } catch(e) { alert('转换失败: ' + e.message); }
+            } catch (e) { alert('转换失败: ' + e.message); }
         };
 
         const rsaConvertFromXml = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/convert-from-xml', { xml: rsaXmlXml.value, targetFormat: rsaXmlTargetFormat.value });
                 rsaXmlFromXmlResult.value = res.data;
-            } catch(e) { alert('转换失败: ' + e.message); }
+            } catch (e) { alert('转换失败: ' + e.message); }
         };
 
         const rsaAddPassword = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/add-password', { pem: rsaPasswordPem.value, password: rsaPasswordPassword.value, targetEncryptedType: rsaPasswordTargetEncryptedType.value, algorithm: rsaPasswordAlgorithm.value });
                 rsaPasswordResult.value = res.data;
-            } catch(e) { alert('添加密码失败: ' + e.message); }
+            } catch (e) { alert('添加密码失败: ' + e.message); }
         };
 
         const rsaDoRemovePassword = async () => {
             try {
                 const res = await api('POST', '/encryption/rsa/remove-password', { pem: rsaRemoveEncryptedPem.value, password: rsaRemovePwd.value });
                 rsaRemoveResult.value = res.data;
-            } catch(e) { alert('移除密码失败: ' + e.message); }
+            } catch (e) { alert('移除密码失败: ' + e.message); }
         };
 
         const refresh = () => {

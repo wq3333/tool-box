@@ -1,6 +1,9 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, onMounted } = Vue;
 
 export const StringView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-none">
@@ -12,7 +15,7 @@ export const StringView = {
             </div>
             <div class="lg:hidden">
                 <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
-                <FSingleSelect v-model="activeTab" :options="tabs.map(t => ({ value: t.key, label: t.label }))"></FSingleSelect>
+                <FSingleSelect v-model="activeTab" :options="tabs.map(t => ({value: t.key, label: t.label}))"></FSingleSelect>
             </div>
         </div>
 
@@ -33,21 +36,25 @@ export const StringView = {
             <div v-if="diffResult.length" class="flex-1 min-h-0 overflow-y-auto space-y-1">
                 <div v-for="(line, i) in diffResult" :key="i"
                     :class="['px-3 py-1 text-xs font-mono rounded',
-                            line.type === 'add' ? 'bg-[var(--success)]/10 text-[var(--success)]' :
-                            line.type === 'del' ? 'bg-[var(--danger)]/10 text-[var(--danger)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]']">
+                        line.type === 'add' ? 'bg-[var(--success)]/10 text-[var(--success)]' :
+                        line.type === 'del' ? 'bg-[var(--danger)]/10 text-[var(--danger)]' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]']">
                     <span class="mr-2">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ' }}</span>{{ line.text }}
                 </div>
             </div>
         </div>
 
         <div v-if="activeTab === 'escape'" class="flex-1 min-h-0 flex flex-col gap-3">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+            <div class="flex flex-col md:flex-row gap-1 flex-1 min-h-0">
                 <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">输入文本</label>
                     <textarea v-model="escapeInput" placeholder="输入文本..."
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
-                <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0" v-if="escapeResult">
+                <div class="flex flex-col self-center w-40 gap-2">
+                    <FButton type="primary" @click="doEscape">转义</FButton>
+                    <FButton type="success" @click="doUnescape">去除转义</FButton>
+                </div>
+                <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
                         <CopyButton :text="escapeResult"></CopyButton>
@@ -56,20 +63,19 @@ export const StringView = {
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <FButton type="primary" @click="doEscape">转义</FButton>
-                <FButton type="default" @click="doUnescape">去除转义</FButton>
-            </div>
         </div>
 
         <div v-if="activeTab === 'case'" class="flex-1 min-h-0 flex flex-col gap-3">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+            <div class="flex flex-col md:flex-row gap-2 flex-1 min-h-0">
                 <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">输入文本</label>
                     <textarea v-model="caseInput" placeholder="输入文本..."
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]"></textarea>
                 </div>
-                <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0" v-if="caseResult">
+                <div class="flex flex-col self-center w-40 gap-2">
+                    <FButton v-for="ct in caseTypes" :key="ct.value" @click="convertCase(ct.value)" type="primary">{{ ct.label }}</FButton>
+                </div>
+                <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-2 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-medium text-[var(--text-secondary)]">结果</label>
                         <CopyButton :text="caseResult"></CopyButton>
@@ -78,24 +84,15 @@ export const StringView = {
                         class="flex-1 min-h-0 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
                 </div>
             </div>
-            <div class="flex flex-wrap gap-2">
-                <FButton v-for="ct in caseTypes" :key="ct.value" @click="convertCase(ct.value)" type="default">{{ ct.label }}</FButton>
-            </div>
         </div>
 
         <div v-if="activeTab === 'random'" class="flex-1 min-h-0 flex flex-col gap-3">
             <div class="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
                 <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                    <div class="flex gap-2 items-center">
-                        <label class="text-xs text-[var(--text-secondary)]">字符集</label>
-                        <FSingleSelect v-model="randomCharSet"
-                            :options="[{value:'number',label:'纯数字'},{value:'letter_lower',label:'小写字母'},{value:'letter_upper',label:'大写字母'},{value:'letter',label:'字母'},{value:'number_and_letter',label:'数字+字母'},{value:'mix',label:'混合(含特殊字符)'}]"></FSingleSelect>
-                    </div>
-                    <div class="flex gap-2 items-center">
-                        <label class="text-xs text-[var(--text-secondary)]">长度</label>
-                        <input type="number" v-model.number="randomLength" min="1" max="256"
-                            class="w-20 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs text-[var(--text-primary)] outline-none hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
-                    </div>
+                    <label class="text-xs text-[var(--text-secondary)] whitespace-nowrap">字符集</label>
+                    <FSingleSelect v-model="randomCharSet" :options="randomCharSetTypes"></FSingleSelect>
+                    <label class="text-xs text-[var(--text-secondary)] whitespace-nowrap">生成长度</label>
+                    <FInput type="number" v-model.number="randomLength" class="w-20" min="1" max="256"></FInput>
                     <FButton type="primary" @click="generateRandom">生成</FButton>
                 </div>
                 <div v-if="randomResult" class="flex items-center gap-2 px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded">
@@ -131,6 +128,14 @@ export const StringView = {
         ];
         const randomLength = ref(16);
         const randomCharSet = ref('number_and_letter');
+        const randomCharSetTypes = [
+            { label: '数字', value: 'number' },
+            { label: '小写字母', value: 'letter_lower' },
+            { label: '大写字母', value: 'letter_upper' },
+            { label: '字母', value: 'letter' },
+            { label: '数字和字母', value: 'number_and_letter' },
+            { label: '混合', value: 'mix' }
+        ];
         const randomResult = ref('');
 
         const computeDiff = () => {
@@ -200,7 +205,7 @@ export const StringView = {
         return {
             activeTab, tabs, diffText1, diffText2, diffResult,
             escapeInput, escapeResult, caseInput, caseResult, caseTypes,
-            randomLength, randomCharSet, randomResult,
+            randomLength, randomCharSet, randomCharSetTypes, randomResult,
             computeDiff, doEscape, doUnescape, convertCase, generateRandom, refresh
         };
     }

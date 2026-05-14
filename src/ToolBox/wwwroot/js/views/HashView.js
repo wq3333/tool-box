@@ -1,6 +1,9 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref, computed } = Vue;
 
 export const HashView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
@@ -23,8 +26,7 @@ export const HashView = {
                 </div>
                 <div v-if="isHmac" class="flex flex-col gap-1">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
-                    <input type="text" v-model="key" placeholder="HMAC密钥"
-                        class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                    <FInput v-model="key" placeholder="HMAC密钥"></FInput>
                 </div>
             </div>
 

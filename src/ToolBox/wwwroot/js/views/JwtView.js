@@ -1,19 +1,22 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref } = Vue;
 
 export const JwtView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-none">
             <div class="hidden lg:flex gap-1 border-b border-[var(--border-subtle)] pb-2">
                 <button v-for="t in jwtTabs" :key="t.key" @click="jwtTab = t.key"
                     :class="['px-3 py-1.5 text-xs rounded transition-colors',
-                            jwtTab === t.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
+                        jwtTab === t.key ? 'bg-[var(--accent)] text-[var(--text-inverse)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                     {{ t.label }}
                 </button>
             </div>
             <div class="lg:hidden">
                 <label class="block text-xs font-medium text-[var(--text-secondary)] mb-1">选择操作</label>
-                <FSingleSelect v-model="jwtTab" :options="jwtTabs.map(t => ({ value: t.key, label: t.label }))"></FSingleSelect>
+                <FSingleSelect v-model="jwtTab" :options="jwtTabs.map(t => ({value: t.key, label: t.label}))"></FSingleSelect>
             </div>
         </div>
 
@@ -52,8 +55,7 @@ export const JwtView = {
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥/Secret</label>
-                    <input v-model="jwtSignKey" placeholder="HMAC密钥或PEM"
-                        class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                    <FInput v-model="jwtSignKey" placeholder="HMAC密钥或PEM"></FInput>
                 </div>
             </div>
             <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -89,8 +91,7 @@ export const JwtView = {
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥/Secret</label>
-                    <input v-model="jwtVerifyKey" placeholder="HMAC密钥或PEM"
-                        class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                    <FInput v-model="jwtVerifyKey" placeholder="HMAC密钥或PEM"></FInput>
                 </div>
             </div>
             <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3">

@@ -20,7 +20,7 @@ import { HashView } from './views/HashView.js';
 import { JwtView } from './views/JwtView.js';
 import { GuidView } from './views/GuidView.js';
 import { HttpView } from './views/HttpView.js';
-import { Base64View } from './views/Base64View.js';
+import { FileBase64View } from './views/Base64View.js';
 
 
 
@@ -278,7 +278,7 @@ const router = createRouter({
         { path: '/hash', component: HashView },
         { path: '/jwt', component: JwtView },
         { path: '/guid', component: GuidView },
-        { path: '/base64', component: Base64View },
+        { path: '/base64', component: FileBase64View },
         { path: '/http', component: HttpView },
     ],
 });

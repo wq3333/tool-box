@@ -1,3 +1,5 @@
+import { IconCopy, IconCheck, IconX } from './icon.js';
+
 const { ref } = Vue;
 
 export const CopyButton = {
@@ -5,9 +7,14 @@ export const CopyButton = {
     props: {
         text: { type: String, default: '' }
     },
+    components: {
+        IconCopy,
+        IconCheck,
+        IconX
+    },
     template: `
         <button 
-            class="inline-flex items-center justify-center w-7 h-7 rounded border border-transparent text-[var(--text-tertiary)] cursor-pointer transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] relative"
+            class="inline-flex items-center justify-center size-[15px] rounded border border-transparent text-[var(--text-tertiary)] cursor-pointer transition-all duration-150 ease-out hover:bg-[var(--bg-hover)] hover:text-[var(--text-secondary)] relative"
             :title="tooltip"
             @click="handleCopy">
             <IconCopy v-if="status === 'idle'" :size="16" />

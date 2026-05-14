@@ -1,18 +1,19 @@
+import { FInput } from '../components/FInput.js';
+
 const { ref } = Vue;
 
 export const TripleDesView = {
+    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4">
         <div class="flex-1 min-h-0 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] p-4 flex flex-col gap-3">
             <div class="flex flex-col gap-2">
                 <label class="block text-xs font-medium text-[var(--text-secondary)]">密钥</label>
-                <input type="text" v-model="key" placeholder="输入3DES密钥"
-                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                <FInput v-model="key" placeholder="输入3DES密钥"></FInput>
             </div>
             <div v-if="mode !== 'ECB'" class="flex flex-col gap-2">
                 <label class="block text-xs font-medium text-[var(--text-secondary)]">IV(必需)</label>
-                <input type="text" v-model="iv" placeholder="输入IV"
-                    class="px-3 py-2 bg-[var(--bg-base)] border border-[var(--border-subtle)] rounded text-xs font-mono text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)] hover:border-[var(--border-strong)] focus:border-[var(--border-focus)]">
+                <FInput v-model="iv" placeholder="输入IV"></FInput>
             </div>
             <div class="flex flex-col gap-2">
                 <label class="block text-xs font-medium text-[var(--text-secondary)]">模式</label>
