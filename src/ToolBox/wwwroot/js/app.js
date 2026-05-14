@@ -1,10 +1,12 @@
+import { FInput } from './components/FInput.js';
 import { FButton } from './components/FButton.js';
 import { FSingleSelect } from './components/FSingleSelect.js';
 import { CopyButton } from './components/CopyButton.js';
 import { 
     IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash, IconChevronDown, NavIcon,
     IconClock, IconEdit, IconDocument, IconText, IconType, IconSearch, IconShield,
-    IconKey, IconLock, IconUnlock, IconKeyAlt, IconPackage, IconID, IconGlobe, IconTerminal
+    IconKey, IconLock, IconUnlock, IconKeyAlt, IconPackage, IconID, IconGlobe, IconTerminal,
+    IconPlus, IconTrash
 } from './components/icon.js';
 import { TimestampView } from './views/TimestampView.js';
 import { JsonView } from './views/JsonView.js';
@@ -20,7 +22,7 @@ import { HashView } from './views/HashView.js';
 import { JwtView } from './views/JwtView.js';
 import { GuidView } from './views/GuidView.js';
 import { HttpView } from './views/HttpView.js';
-import { FileBase64View } from './views/Base64View.js';
+import { FileBase64View } from './views/FileBase64View.js';
 
 
 
@@ -286,6 +288,7 @@ const router = createRouter({
 const app = createApp(App);
 app.use(ThemePlugin);
 app.use(router);
+app.component('FInput', FInput);
 app.component('FButton', FButton);
 app.component('FSingleSelect', FSingleSelect);
 app.component('CopyButton', CopyButton);
@@ -296,14 +299,8 @@ app.component('IconSun', IconSun);
 app.component('IconMoon', IconMoon);
 app.component('IconChevronDown', IconChevronDown);
 app.component('NavIcon', NavIcon);
-app.component('IconPlus', {
-    props: { size: { type: Number, default: 16 } },
-    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
-});
-app.component('IconTrash', {
-    props: { size: { type: Number, default: 16 } },
-    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>'
-});
+app.component('IconPlus', IconPlus);
+app.component('IconTrash', IconTrash);
 app.mount('#app');
 
 export { FButton, FSingleSelect, CopyButton };

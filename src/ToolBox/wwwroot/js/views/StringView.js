@@ -1,9 +1,9 @@
-import { FInput } from '../components/FInput.js';
+import { IconDiff } from '../components/icon.js';
 
 const { ref, onMounted } = Vue;
 
 export const StringView = {
-    components: { FInput },
+    components: { IconDiff },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-none">
@@ -31,12 +31,10 @@ export const StringView = {
                 </div>
             </div>
             <FButton type="primary" @click="computeDiff" class="w-full py-3 text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <IconDiff :size="20" />
                 比较
             </FButton>
-            <div v-if="diffResult.length" class="flex-1 min-h-0 overflow-y-auto bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-1">
+            <div class="flex-1 min-h-0 overflow-y-auto bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-1">
                 <div v-for="(line, i) in diffResult" :key="i"
                     :class="['px-3 py-2 rounded-lg text-sm font-mono',
                         line.type === 'add' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
@@ -53,12 +51,7 @@ export const StringView = {
                     <textarea v-model="escapeInput" placeholder="输入文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-                <div class="flex flex-col self-center w-14">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </div>
+                <div class="flex flex-col self-center w-20 gap-2">
                     <FButton type="primary" @click="doEscape" block>转义</FButton>
                     <FButton type="success" @click="doUnescape" block>去除转义</FButton>
                 </div>
@@ -80,12 +73,7 @@ export const StringView = {
                     <textarea v-model="caseInput" placeholder="输入文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
-                <div class="flex flex-col self-center w-14">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </div>
+                <div class="flex flex-col self-center w-20 gap-2">
                     <FButton v-for="ct in caseTypes" :key="ct.value" @click="convertCase(ct.value)" type="primary" block>{{ ct.label }}</FButton>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">

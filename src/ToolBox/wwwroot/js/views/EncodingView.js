@@ -24,14 +24,9 @@ export const EncodingView = {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </div>
-                <FButton type="primary" @click="encode" block>{{ encodeLabel }}</FButton>
-                <FButton type="success" @click="decode" block>{{ decodeLabel }}</FButton>
+            <div class="flex flex-col gap-3 self-center w-20">
+                <FButton type="primary" @click="encode" block>编码</FButton>
+                <FButton type="success" @click="decode" block>解码</FButton>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
@@ -72,14 +67,6 @@ export const EncodingView = {
 
         const outputPlaceholder = computed(() => {
             return '编码/解码结果...';
-        });
-
-        const encodeLabel = computed(() => {
-            return { url: 'URL编码', base64: 'Base64编码', base64url: 'Base64Url编码', utf8: 'UTF-8编码', hex: 'Hex编码' }[activeTab.value];
-        });
-
-        const decodeLabel = computed(() => {
-            return { url: 'URL解码', base64: 'Base64解码', base64url: 'Base64Url解码', utf8: 'UTF-8解码', hex: 'Hex解码' }[activeTab.value];
         });
 
         const encode = () => {
@@ -144,8 +131,7 @@ export const EncodingView = {
 
         return {
             activeTab, tabs, inputs, outputs, currentInput, currentOutput,
-            inputPlaceholder, outputPlaceholder, encodeLabel, decodeLabel,
-            encode, decode, utf8Encode, utf8Decode, hexEncode, hexDecode, refresh
+            inputPlaceholder, outputPlaceholder, encode, decode, utf8Encode, utf8Decode, hexEncode, hexDecode, refresh
         };
     }
 };

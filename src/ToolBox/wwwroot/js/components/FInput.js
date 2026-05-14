@@ -11,7 +11,7 @@ export const FInput = {
     },
     emits: ['update:modelValue', 'enter', 'blur', 'focus'],
     template: `
-        <div class="relative w-full">
+        <div class="relative w-full h-10">
             <span v-if="icon" class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] text-sm leading-none pointer-events-none">{{ icon }}</span>
             <input
                 :type="type"

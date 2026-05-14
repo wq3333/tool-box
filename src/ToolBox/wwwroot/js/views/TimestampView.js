@@ -1,28 +1,18 @@
-import { FInput } from '../components/FInput.js';
+import { IconClockArrow, IconCalendar } from '../components/icon.js';
 
 const { ref, onMounted } = Vue;
 
 export const TimestampView = {
-    components: { FInput },
+    components: { IconClockArrow, IconCalendar },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
-                <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">日期时间</label>
-                    <button @click="updateNow" class="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        现在
-                    </button>
-                </div>
+                <label class="text-sm font-semibold text-slate-700">日期时间</label>
                 <input type="datetime-local" v-model="datetime"
-                    class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <FButton type="primary" @click="toUnix" class="w-full py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    class="h-10 w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] font-mono outline-none transition-all duration-150 ease-out hover:border-[var(--border-strong)] focus:border-[var(--border-focus)] focus:shadow-[0_0_0_3px_var(--accent-subtle)]">
+                <FButton type="primary" @click="toUnix" class="w-full text-base">
+                    <IconClockArrow :size="20" />
                     转为时间戳
                 </FButton>
                 <div v-if="unixResult" class="flex flex-col gap-3">
@@ -54,10 +44,8 @@ export const TimestampView = {
                     </div>
                 </div>
                 <FInput v-model="timestamp" placeholder="输入时间戳（秒或毫秒）"></FInput>
-                <FButton type="primary" @click="toDatetime" class="w-full py-3 text-base">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                <FButton type="primary" @click="toDatetime" class="w-full text-base">
+                    <IconCalendar :size="20" />
                     转为日期时间
                 </FButton>
                 <div v-if="datetimeResult" class="flex flex-col gap-3">
@@ -110,9 +98,10 @@ export const TimestampView = {
             if (isNaN(ts)) return;
             if (unit.value === 'seconds') ts *= 1000;
             const date = new Date(ts);
+            const pad = (n) => String(n).padStart(2, '0');
             datetimeResult.value = {
-                local: date.toLocaleString('zh-CN', { hour12: false }),
-                utc: date.toUTCString()
+                local: `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`,
+                utc: `${date.getUTCFullYear()}/${pad(date.getUTCMonth() + 1)}/${pad(date.getUTCDate())} ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`
             };
         };
 

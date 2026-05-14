@@ -22,20 +22,14 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <input v-model="pattern" type="text" placeholder="输入正则表达式..."
-                        class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
+                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">测试文本</label>
-                    <textarea v-model="input" placeholder="输入要测试的文本..." @input="run"
+                    <textarea v-model="input" placeholder="输入要测试的文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </div>
+            <div class="flex flex-col gap-3 self-center w-20 gap-2">
                 <FButton type="primary" @click="run" block>匹配</FButton>
             </div>
 
@@ -53,8 +47,7 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <input v-model="pattern" type="text" placeholder="输入正则表达式..."
-                        class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
+                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">替换为</label>
                     <input v-model="replacement" type="text" placeholder="输入替换内容..."
                         class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
@@ -64,12 +57,7 @@ export const RegexView = {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </div>
+            <div class="flex flex-col gap-3 self-center w-20 gap-2">
                 <FButton type="primary" @click="runReplace" block>替换</FButton>
             </div>
 
@@ -87,20 +75,14 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <input v-model="pattern" type="text" placeholder="输入正则表达式..."
-                        class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
+                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">输入文本</label>
                     <textarea v-model="input" placeholder="输入要分割的文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </div>
+            <div class="flex flex-col gap-3 self-center w-20 gap-2">
                 <FButton type="primary" @click="runSplit" block>分割</FButton>
             </div>
 
@@ -114,10 +96,10 @@ export const RegexView = {
             </div>
         </div>
 
-        <div v-if="activeTab === 'templates'" class="flex-1 min-h-0">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <template v-if="activeTab === 'templates'">
+            <div class="flex-1 overflow-hidden flex flex-col gap-2 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <label class="text-sm font-semibold text-slate-700 mb-3 block">常用正则表达式</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto">
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
                     <div v-for="(item, index) in regexTemplates" :key="index"
                         class="p-4 bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-300 cursor-pointer transition-colors"
                         @click="selectTemplate(item)">
@@ -126,7 +108,7 @@ export const RegexView = {
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
     `,
     setup() {

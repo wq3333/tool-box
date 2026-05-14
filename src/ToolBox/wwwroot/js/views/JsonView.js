@@ -1,9 +1,6 @@
-import { FInput } from '../components/FInput.js';
-
 const { ref, computed } = Vue;
 
 export const JsonView = {
-    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="flex-none">
@@ -27,14 +24,9 @@ export const JsonView = {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 self-center w-14">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </div>
+            <div class="flex flex-col gap-3 self-center w-20">
                 <div v-if="activeTab === 'to-csharp'" class="flex flex-col items-center">
-                    <span class="text-xs text-slate-500 mb-1">根类名:</span>
+                    <span class="text-xs self-start text-slate-500 mb-1">根类名:</span>
                     <FInput v-model="rootName" placeholder="Root" class="w-24 text-center"></FInput>
                 </div>
                 <FButton type="primary" @click="execute" block>{{ executeLabel }}</FButton>
