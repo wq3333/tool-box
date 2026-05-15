@@ -16,7 +16,7 @@ export const RsaView = {
         </div>
 
         <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-2 md:flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">{{ inputLabel }}</label>
                     <textarea v-model="currentInput" :placeholder="inputPlaceholder"
@@ -34,23 +34,23 @@ export const RsaView = {
                 </div>
             </div>
 
-            <div class="flex flex-col gap-4 self-center w-40">
+            <div class="flex flex-col gap-4 self-stretch md:self-center w-auto md:w-40">
                 <div v-if="activeTab === 'encrypt' || activeTab === 'decrypt'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                     <label class="text-sm font-semibold text-slate-700 mb-2 block">填充方式</label>
                     <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
                 </div>
-                <template v-if="activeTab === 'sign' || activeTab === 'verify'">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <div v-if="activeTab === 'sign' || activeTab === 'verify'" class="flex-1 flex flex-row md:flex-col gap-4">
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                         <label class="text-sm font-semibold text-slate-700 mb-2 block">哈希算法</label>
                         <FSingleSelect v-model="hashAlgorithm" :options="hashOptions"></FSingleSelect>
                     </div>
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                    <div class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                         <label class="text-sm font-semibold text-slate-700 mb-2 block">填充方式</label>
                         <FSingleSelect v-model="rsaPadding" :options="paddingOptions"></FSingleSelect>
                     </div>
-                </template>
+                </div>
 
-                <FButton type="primary" @click="executeEncryption" block>{{ executeLabel }}</FButton>
+                <FButton class="flex-1" type="primary" @click="executeEncryption" block>{{ executeLabel }}</FButton>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">

@@ -8,117 +8,114 @@ export const HttpView = {
     components: { FInput, CopyButton, IconPlay, IconPlus, IconTrash },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
-        <div class="flex-1 min-h-0 flex flex-col gap-4">
-            <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
+        <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
+            <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
+            <div class="flex flex-row gap-2">
                 <FSingleSelect style="width:100px" class="h-10" v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
-                <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
                 <label class="flex h-10 items-center gap-2 cursor-pointer p-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
                     <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
                     <span class="text-sm text-slate-600">本地模式</span>
                 </label>
-                <FButton @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
+                <FButton class="h-9 self-center" @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
                     <IconPlay :size="20" />
                     {{ loading ? '请求中...' : '发送' }}
                 </FButton>
             </div>
+        </div>
 
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-hidden">
-                <div class="flex flex-col gap-3 overflow-hidden">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col gap-3 p-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="text-sm font-semibold text-slate-700">请求头</label>
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-auto">
+            <div class="flex flex-col gap-3">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3 p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-semibold text-slate-700">请求头</label>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-2 overflow-y-auto">
+                        <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
+                            <FInput v-model="h.key" placeholder="键" class="flex-1 "></FInput>
+                            <FInput v-model="h.value" placeholder="值" class="flex-1 "></FInput>
+                            <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                <IconTrash :size="14" />
+                            </button>
                         </div>
-                        <div class="flex flex-col gap-2 overflow-y-auto">
-                            <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
-                                <FInput v-model="h.key" placeholder="键" class="flex-1 min-w-[80px]"></FInput>
-                                <FInput v-model="h.value" placeholder="值" class="flex-1 min-w-[80px]"></FInput>
-                                <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                    <IconTrash :size="14" />
-                                </button>
+                    </div>
+                    <div class="flex-none">
+                        <FButton type="default" size="sm" @click="addHeader"><IconPlus :size="14" />添加请求头</FButton>
+                    </div>
+                </div>
+
+                <div v-if="method !== 'GET'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3">
+                    <div class="flex flex-col lg:flex-row lg:items-center gap-3">
+                        <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">请求体</label>
+                        <FSingleSelect v-model="contentType"
+                            :options="[{value:'application/json',label:'application/json'},{value:'application/x-www-form-urlencoded',label:'application/x-www-form-urlencoded'},{value:'multipart/form-data',label:'multipart/form-data'},{value:'text/plain',label:'text/plain'},{value:'text/xml',label:'text/xml'}]"></FSingleSelect>
+                    </div>
+                    <div v-if="contentType === 'multipart/form-data' || contentType === 'application/x-www-form-urlencoded'" class="flex flex-col gap-2 flex-1">
+                        <div v-for="(f, i) in formFields" :key="i" class="flex gap-2 items-center">
+                            <FSingleSelect style="width:80px" class="h-10" v-if="contentType === 'multipart/form-data'" v-model="f.type" class="flex-shrink-0"
+                                :options="[{value:'text',label:'文本'},{value:'file',label:'文件'}]"></FSingleSelect>
+                            <FInput v-model="f.key" placeholder="字段名" class="flex-1 overflow-hidden"></FInput>
+                            <FInput v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" v-model="f.value" placeholder="字段值" class="flex-1 overflow-hidden"></FInput>
+                            <div v-else class="flex-1 flex gap-2 overflow-hidden">
+                                <span v-if="f.type === 'file' && f.fileName" class="flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ f.fileName }}</span>
+                                <span v-else @click="f.fileRef.click()" class="flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">选择文件</span>
+                                <input type="file" :ref="el => { if (el) f.fileRef = el }"
+                                    class="hidden flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="选择文件"
+                                    @change="f.fileName = f.fileRef.files[0]?.name || ''">
                             </div>
+                            <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                <IconTrash :size="14" />
+                            </button>
                         </div>
                         <div class="flex-none">
-                            <FButton type="default" size="sm" @click="addHeader"><IconPlus :size="14" />添加请求头</FButton>
+                            <FButton type="default" size="sm" @click="addFormField"><IconPlus :size="14" />添加字段</FButton>
                         </div>
                     </div>
+                    <textarea v-else v-model="body" placeholder="请求体内容..."
+                        class="flex-1 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                </div>
+            </div>
 
-                    <div v-if="method !== 'GET'" class="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
-                        <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                            <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">请求体</label>
-                            <FSingleSelect v-model="contentType"
-                                :options="[{value:'application/json',label:'application/json'},{value:'application/x-www-form-urlencoded',label:'application/x-www-form-urlencoded'},{value:'multipart/form-data',label:'multipart/form-data'},{value:'text/plain',label:'text/plain'},{value:'text/xml',label:'text/xml'}]"></FSingleSelect>
-                        </div>
-                        <div v-if="contentType === 'multipart/form-data' || contentType === 'application/x-www-form-urlencoded'" class="overflow-hidden flex flex-col gap-2 flex-1 min-h-0">
-                            <div class="flex flex-col gap-2 overflow-y-auto">
-                                <div v-for="(f, i) in formFields" :key="i" class="flex gap-2 items-center">
-                                    <FSingleSelect style="width:80px" class="h-10" v-if="contentType === 'multipart/form-data'" v-model="f.type" class="flex-shrink-0"
-                                        :options="[{value:'text',label:'文本'},{value:'file',label:'文件'}]"></FSingleSelect>
-                                    <FInput v-model="f.key" placeholder="字段名" class="flex-1 min-w-[80px]"></FInput>
-                                    <div v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" class="flex-1 flex">
-                                        <input type="text" v-model="f.value" placeholder="字段值"
-                                            class="flex-1 min-w-[80px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    </div>
-                                    <div v-else class="flex-1 flex gap-2">
-                                        <span v-if="f.type === 'file' && f.fileName" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ f.fileName }}</span>
-                                        <input v-else type="file" :ref="el => { if (el) f.fileRef = el }"
-                                            class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            @change="f.fileName = f.fileRef.files[0]?.name || ''">
-                                    </div>
-                                    <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                        <IconTrash :size="14" />
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex-none">
-                                <FButton type="default" size="sm" @click="addFormField"><IconPlus :size="14" />添加字段</FButton>
-                            </div>
-                        </div>
-                        <textarea v-else v-model="body" placeholder="请求体内容..."
-                            class="flex-1 min-h-0 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                    </div>
+            <div v-if="response" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1">
+                <div class="flex items-center gap-3">
+                    <span :class="['px-3 py-1.5 rounded-lg text-sm font-bold', response.statusCode < 300 ? 'bg-emerald-100 text-emerald-700' : response.statusCode < 400 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700']">
+                        {{ response.statusCode }} {{ response.statusText }}
+                    </span>
+                    <span class="text-sm text-slate-500">{{ response.duration }}ms</span>
+                    <span v-if="localMode" class="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">本地模式</span>
                 </div>
 
-                <div v-if="response" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
-                    <div class="flex items-center gap-3">
-                        <span :class="['px-3 py-1.5 rounded-lg text-sm font-bold', response.statusCode < 300 ? 'bg-emerald-100 text-emerald-700' : response.statusCode < 400 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700']">
-                            {{ response.statusCode }} {{ response.statusText }}
-                        </span>
-                        <span class="text-sm text-slate-500">{{ response.duration }}ms</span>
-                        <span v-if="localMode" class="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">本地模式</span>
-                    </div>
-
-                    <div class="flex-none">
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">响应头</label>
-                        <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[150px] overflow-y-auto">
-                            <div v-for="(v, k) in response.headers" :key="k" class="flex flex-wrap">
-                                <span class="text-slate-500">{{ k }}:</span> <span class="text-slate-700 ml-1">{{ v }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 min-h-0 flex flex-col">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="text-sm font-semibold text-slate-700">响应体</label>
-                            <div class="flex items-center gap-2">
-                                <button @click="responseView = 'raw'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'raw' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">Raw</button>
-                                <button @click="responseView = 'html'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'html' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">HTML</button>
-                                <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'preview' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">图片预览</button>
-                                <CopyButton :text="response.body"></CopyButton>
-                            </div>
-                        </div>
-                        <textarea v-if="responseView === 'raw'" :value="response.body" readonly
-                            class="flex-1 min-h-0 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none"></textarea>
-                        <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 min-h-0 w-full rounded-lg border border-slate-200 bg-white"></iframe>
-                        <div v-else class="flex-1 min-h-0 flex items-center justify-center overflow-auto bg-slate-50 rounded-lg">
-                            <img :src="response.body" class="max-w-full max-h-full object-contain rounded-lg border border-slate-200"></img>
+                <div class="flex-none">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">响应头</label>
+                    <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[150px] overflow-y-auto">
+                        <div v-for="(v, k) in response.headers" :key="k" class="flex flex-wrap">
+                            <span class="text-slate-500">{{ k }}:</span> <span class="text-slate-700 ml-1">{{ v }}</span>
                         </div>
                     </div>
                 </div>
 
-                <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col items-center justify-center text-slate-400">
-                    <IconPlay class="w-12 h-12 mb-3 text-slate-300" />
-                    <span class="text-sm">发送请求后响应将显示在这里</span>
+                <div class="flex-1 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-semibold text-slate-700">响应体</label>
+                        <div class="flex items-center gap-2">
+                            <button @click="responseView = 'raw'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'raw' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">Raw</button>
+                            <button @click="responseView = 'html'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'html' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">HTML</button>
+                            <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'preview' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">图片预览</button>
+                            <CopyButton :text="response.body"></CopyButton>
+                        </div>
+                    </div>
+                    <textarea v-if="responseView === 'raw'" :value="response.body" readonly
+                        class="flex-1 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none"></textarea>
+                    <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 w-full rounded-lg border border-slate-200 bg-white"></iframe>
+                    <div v-else class="flex-1 flex items-center justify-center overflow-auto bg-slate-50 rounded-lg">
+                        <img :src="response.body" class="max-w-full max-h-full object-contain rounded-lg border border-slate-200"></img>
+                    </div>
                 </div>
+            </div>
+
+            <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col items-center justify-center text-slate-400">
+                <IconPlay class="w-12 h-12 mb-3 text-slate-300" />
+                <span class="text-sm">发送请求后响应将显示在这里</span>
             </div>
         </div>
     </div>

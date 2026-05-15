@@ -7,15 +7,15 @@ const { ref, onMounted } = Vue;
 export const GuidView = {
     components: { FInput, CopyButton, IconLock, IconRefresh },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+    <div class="flex-1 overflow-hidden flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex-1 overflow-hidden flex flex-col gap-4">
             <div class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
                 <IconLock class="w-5 h-5 text-blue-500" />
                 <code class="flex-1 text-sm font-mono text-slate-700">00000000-0000-0000-0000-000000000000</code>
                 <CopyButton :text="'00000000-0000-0000-0000-000000000000'"></CopyButton>
             </div>
 
-            <div class="flex flex-col gap-4">
+            <div class="flex-1 overflow-hidden flex flex-col gap-4">
                 <div class="flex flex-wrap gap-4">
                     <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-slate-50 transition-colors">
                         <input type="radio" v-model="format" value="D" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">

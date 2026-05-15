@@ -43,7 +43,7 @@ export const JwtView = {
                     <div class="flex flex-col gap-3">
                         <label class="text-sm font-semibold text-slate-700">Private Key</label>
                         <textarea v-model="signRsaPrivateKey" placeholder="RSA私钥 (PEM格式)..."
-                            class="min-h-[120px] px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                            class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                     </div>
                     <div class="flex flex-col gap-3">
                         <label class="text-sm font-semibold text-slate-700">Password (可选)</label>
@@ -120,11 +120,11 @@ export const JwtView = {
             </template>
             
             <template v-if="verifyMethod === 'rsa'">
-                <div class="grid grid-cols-1 gap-4 flex-none">
+                <div class="flex-1 gap-4 flex-none">
                     <div class="flex flex-col gap-3">
                         <label class="text-sm font-semibold text-slate-700">Public Key</label>
                         <textarea v-model="verifyRsaPublicKey" placeholder="RSA公钥 (PEM格式)..."
-                            class="min-h-[120px] px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                            class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                     </div>
                 </div>
             </template>
@@ -155,7 +155,7 @@ export const JwtView = {
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-semibold text-slate-700">Header</label>
                         <textarea v-model="verifyHeader" readonly placeholder="Header JSON..."
-                            class="flex-1 min-h-[100px] px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                            class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-semibold text-slate-700">Payload</label>
