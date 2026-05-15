@@ -61,7 +61,7 @@ export const RsaKeyView = {
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
-            <FButton type="primary" @click="rsaCompare" class="w-full py-3 text-base">
+            <FButton type="primary" @click="rsaCompare" class="w-full text-base">
                 <IconDiff :size="20" />
                 比对
             </FButton>
@@ -124,7 +124,7 @@ export const RsaKeyView = {
                     <input type="checkbox" v-model="rsaXmlIncludePrivate" class="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500">
                     <span class="text-sm text-slate-600">包含私钥参数</span>
                 </div>
-                <FButton type="primary" @click="rsaConvertToXml" class="w-full py-3 text-base">
+                <FButton type="primary" @click="rsaConvertToXml" class="w-full text-base">
                     <IconArrowRight :size="20" />
                     转换为XML
                 </FButton>
@@ -148,7 +148,7 @@ export const RsaKeyView = {
                         <FSingleSelect v-model="rsaXmlTargetFormat" :options="[{value:'pkcs1',label:'PKCS#1'},{value:'pkcs8',label:'PKCS#8'},{value:'public',label:'公钥(X.509)'}]"></FSingleSelect>
                     </div>
                 </div>
-                <FButton type="primary" @click="rsaConvertFromXml" class="w-full py-3 text-base">
+                <FButton type="primary" @click="rsaConvertFromXml" class="w-full text-base">
                     <IconArrowRight :size="20" />
                     转换为PEM
                 </FButton>
@@ -198,7 +198,7 @@ export const RsaKeyView = {
                         <label class="text-sm font-semibold text-slate-700">算法</label>
                         <FSingleSelect v-model="rsaPasswordAlgorithm" :options="[{value:'AES-256-CBC',label:'AES-256-CBC'},{value:'DES-EDE3-CBC',label:'DES-EDE3-CBC'}]"></FSingleSelect>
                     </div>
-                    <FButton type="primary" @click="rsaAddPassword" class="w-full py-3 text-base">
+                    <FButton type="primary" @click="rsaAddPassword" class="w-full text-base">
                         <IconLockAlt :size="20" />
                         添加密码
                     </FButton>
@@ -224,7 +224,7 @@ export const RsaKeyView = {
                         <label class="text-sm font-semibold text-slate-700">密码</label>
                         <FInput v-model="rsaRemovePwd" placeholder="输入密码"></FInput>
                     </div>
-                    <FButton type="primary" @click="rsaDoRemovePassword" class="w-full py-3 text-base">
+                    <FButton type="primary" @click="rsaDoRemovePassword" class="w-full text-base">
                         <IconUser :size="20" />
                         移除密码
                     </FButton>

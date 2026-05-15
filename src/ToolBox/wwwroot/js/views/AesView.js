@@ -35,11 +35,11 @@ export const AesView = {
             </div>
 
             <div class="flex gap-3">
-                <FButton type="primary" @click="encrypt" class="flex-1 py-3 text-base">
+                <FButton type="primary" @click="encrypt" class="flex-1 text-base">
                     <IconLock />
                     加密
                 </FButton>
-                <FButton type="success" @click="decrypt" class="flex-1 py-3 text-base">
+                <FButton type="success" @click="decrypt" class="flex-1 text-base">
                     <IconUnlock />
                     解密
                 </FButton>

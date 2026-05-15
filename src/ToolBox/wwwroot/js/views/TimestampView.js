@@ -12,7 +12,7 @@ export const TimestampView = {
                 <input type="datetime-local" v-model="datetime"
                     class="h-10 w-full px-3 py-2 bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] font-mono outline-none transition-all duration-150 ease-out hover:border-[var(--border-strong)] focus:border-[var(--border-focus)] focus:shadow-[0_0_0_3px_var(--accent-subtle)]">
                 <FButton type="primary" @click="toUnix" class="w-full text-base">
-                    <IconClockArrow :size="20" />
+                    <IconClockArrow :size="14" />
                     转为时间戳
                 </FButton>
                 <div v-if="unixResult" class="flex flex-col gap-3">
@@ -45,7 +45,7 @@ export const TimestampView = {
                 </div>
                 <FInput v-model="timestamp" placeholder="输入时间戳（秒或毫秒）"></FInput>
                 <FButton type="primary" @click="toDatetime" class="w-full text-base">
-                    <IconCalendar :size="20" />
+                    <IconCalendar :size="14" />
                     转为日期时间
                 </FButton>
                 <div v-if="datetimeResult" class="flex flex-col gap-3">

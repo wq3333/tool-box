@@ -7,14 +7,14 @@ const icon = (svgContent, defaultSize = 18) => ({
     template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" :stroke="stroke" :stroke-width="strokeWidth" stroke-linecap="round" stroke-linejoin="round">${svgContent}</svg>`
 });
 
-const iconFilled = (svgContent, defaultSize = 18) => ({
-    props: {
-        size: { type: Number, default: defaultSize }
-    },
-    template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24">${svgContent}</svg>`
-});
-
-export const IconLogo = iconFilled('<rect width="24" height="24" rx="6" /><path d="M7 8h4v8H7V8zm6 0h4v8h-4V8z" opacity="0.9"/><path d="M8 9h2v6H8V9zm6 0h2v6h-2V9z" opacity="0.3"/>', 28);
+export const IconLogo = {
+    props: { size: { type: Number, default: 28 } },
+    template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24">
+        <rect width="24" height="24" rx="6" fill="var(--accent)"/>
+        <path d="M7 8h4v8H7V8zm6 0h4v8h-4V8z" fill="white" opacity="0.9"/>
+        <path d="M8 9h2v6H8V9zm6 0h2v6h-2V9z" fill="var(--accent)" opacity="0.3"/>
+    </svg>`
+};
 export const IconMenu = icon('<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>', 20);
 export const IconClose = icon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>');
 export const IconX = icon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>');
@@ -28,10 +28,7 @@ export const IconFile = icon('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12
 export const IconImage = icon('<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>');
 export const IconDownload = icon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>');
 export const IconHash = icon('<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>', 16);
-export const IconChevronDown = {
-    props: { size: { type: Number, default: 16 } },
-    template: '<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
-};
+export const IconChevronDown = icon('<polyline points="6 9 12 15 18 9"/>', 16);
 
 // Navigation icons
 export const IconClock = icon('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>');

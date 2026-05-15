@@ -112,11 +112,11 @@ const App = {
                     <template v-if="item.children">
                         <div class="sidebar-nav-group">
                             <div class="sidebar-nav-item sidebar-nav-item--clickable"
-                                :class="{ 'sidebar-nav-item--active': isGroupActive(item) }"
+                                :class="{ 'sidebar-nav-item--active': isGroupActive(item.group) }"
                                 @click="toggleGroup(item.group)">
-                                <NavIcon :icon="item.icon" :active="isGroupActive(item)" :color="item.color" />
-                                <span class="flex-1 whitespace-nowrap">{{ item.label }}</span>
-                                <IconChevronDown class="sidebar-nav-chevron transition-transform duration-200" :class="{ 'rotate-180': openGroups[item.group] }" />
+                                <NavIcon :icon="item.icon" :active="isGroupActive(item.group)" :color="item.color" />
+                                <span class="flex-1 whitespace-nowrap" :style="{ color: isGroupActive(item.group) ? item.color : '' }">{{ item.label }}</span>
+                                <IconChevronDown class="sidebar-nav-chevron transition-transform duration-200" :class="{ 'rotate-180': openGroups[item.group] }" :style="{ color: isGroupActive(item.group) ? item.color : '' }" />
                             </div>
                             <div v-show="openGroups[item.group]" class="sidebar-nav-submenu">
                                 <a v-for="child in item.children" :key="child.route"

@@ -59,7 +59,7 @@ export const JwtView = {
             </div>
             
             <div class="flex gap-3">
-                <FButton type="primary" @click="jwtDoSign" class="flex-1 py-3 text-base">
+                <FButton type="primary" @click="jwtDoSign" class="flex-1 text-base">
                     <IconLock :size="20" />
                     签名
                 </FButton>
@@ -136,7 +136,7 @@ export const JwtView = {
             </div>
             
             <div class="flex gap-3">
-                <FButton type="primary" @click="jwtDoVerify" class="flex-1 py-3 text-base">
+                <FButton type="primary" @click="jwtDoVerify" class="flex-1 text-base">
                     <IconCircleCheck :size="20" />
                     验签
                 </FButton>

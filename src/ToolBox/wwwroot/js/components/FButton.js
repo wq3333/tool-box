@@ -29,9 +29,9 @@ export const FButton = {
 
         const sizeClasses = computed(() => {
             switch (props.size) {
-                case 'sm': return 'px-2.5 py-1 text-xs rounded';
+                case 'sm': return 'px-2 py-1 text-xs rounded';
                 case 'lg': return 'px-5 py-2 text-base rounded';
-                default: return 'px-4 py-1.5 text-sm rounded';
+                default: return 'px-2.5 py-1.5 text-sm rounded';
             }
         });
 

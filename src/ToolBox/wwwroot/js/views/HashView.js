@@ -35,7 +35,7 @@ export const HashView = {
                 </div>
             </div>
 
-            <FButton type="primary" @click="compute" class="w-full py-3 text-base">
+            <FButton type="primary" @click="compute" class="w-full text-base">
                 <IconPlay :size="20" />
                 计算
             </FButton>

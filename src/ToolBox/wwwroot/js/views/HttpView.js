@@ -16,7 +16,7 @@ export const HttpView = {
                     <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
                     <span class="text-sm text-slate-600">本地模式</span>
                 </label>
-                <FButton @click="send" type="primary" :loading="loading" class="h-10 flex-1 lg:flex-none">
+                <FButton @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
                     <IconPlay :size="20" />
                     {{ loading ? '请求中...' : '发送' }}
                 </FButton>
