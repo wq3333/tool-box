@@ -4,11 +4,13 @@ import { FSingleSelect } from './components/FSingleSelect.js';
 import { CopyButton } from './components/CopyButton.js';
 import { ToastContainer, ToastPlugin } from './components/Toast.js';
 import { 
-    IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash, IconChevronDown, NavIcon,
-    IconClock, IconEdit, IconDocument, IconText, IconType, IconSearch, IconShield,
-    IconKey, IconLock, IconUnlock, IconKeyAlt, IconPackage, IconID, IconGlobe, IconTerminal,
-    IconPlus, IconTrash, IconPlay, IconCircleCheck
-} from './components/icon.js';
+    IconLogo, IconMenu, IconClose, IconX, IconCopy, IconCheck, IconSun, IconMoon, IconPlus, IconTrash, 
+    IconFile, IconImage, IconDownload, IconHash, IconChevronDown, IconClock, IconEdit, IconDocument, 
+    IconText, IconType, IconSearch, IconShield, IconKey, IconLock, IconUnlock, IconKeyAlt, 
+    IconPackage, IconID, IconGlobe, IconTerminal, IconClockArrow, IconCalendar, IconUpload, 
+    IconDiff, IconRefresh, IconArrowRight, IconUser, IconLockAlt, IconSuccess, IconError, 
+    IconWarning, IconInfo, IconPlay, IconCircleCheck, NavIcon
+} from './components/Icon.js';
 import { TimestampView } from './views/TimestampView.js';
 import { JsonView } from './views/JsonView.js';
 import { RsaKeyView } from './views/RsaKeyView.js';
@@ -300,14 +302,48 @@ app.component('CopyButton', CopyButton);
 app.component('IconLogo', IconLogo);
 app.component('IconMenu', IconMenu);
 app.component('IconClose', IconClose);
+app.component('IconX', IconX);
+app.component('IconCopy', IconCopy);
+app.component('IconCheck', IconCheck);
 app.component('IconSun', IconSun);
 app.component('IconMoon', IconMoon);
-app.component('IconChevronDown', IconChevronDown);
-app.component('NavIcon', NavIcon);
 app.component('IconPlus', IconPlus);
 app.component('IconTrash', IconTrash);
+app.component('IconFile', IconFile);
+app.component('IconImage', IconImage);
+app.component('IconDownload', IconDownload);
+app.component('IconHash', IconHash);
+app.component('IconChevronDown', IconChevronDown);
+app.component('IconClock', IconClock);
+app.component('IconEdit', IconEdit);
+app.component('IconDocument', IconDocument);
+app.component('IconText', IconText);
+app.component('IconType', IconType);
+app.component('IconSearch', IconSearch);
+app.component('IconShield', IconShield);
+app.component('IconKey', IconKey);
+app.component('IconLock', IconLock);
+app.component('IconUnlock', IconUnlock);
+app.component('IconKeyAlt', IconKeyAlt);
+app.component('IconPackage', IconPackage);
+app.component('IconID', IconID);
+app.component('IconGlobe', IconGlobe);
+app.component('IconTerminal', IconTerminal);
+app.component('IconClockArrow', IconClockArrow);
+app.component('IconCalendar', IconCalendar);
+app.component('IconUpload', IconUpload);
+app.component('IconDiff', IconDiff);
+app.component('IconRefresh', IconRefresh);
+app.component('IconArrowRight', IconArrowRight);
+app.component('IconUser', IconUser);
+app.component('IconLockAlt', IconLockAlt);
+app.component('IconSuccess', IconSuccess);
+app.component('IconError', IconError);
+app.component('IconWarning', IconWarning);
+app.component('IconInfo', IconInfo);
 app.component('IconPlay', IconPlay);
 app.component('IconCircleCheck', IconCircleCheck);
+app.component('NavIcon', NavIcon);
 app.mount('#app');
 
 export { FButton, FSingleSelect, CopyButton };

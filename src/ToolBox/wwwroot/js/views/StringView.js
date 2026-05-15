@@ -1,9 +1,6 @@
-import { IconDiff, IconRefresh } from '../components/icon.js';
-
 const { ref, onMounted } = Vue;
 
 export const StringView = {
-    components: { IconDiff, IconRefresh },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">

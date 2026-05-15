@@ -1,9 +1,6 @@
-import { FInput } from '../components/FInput.js';
-
 const { ref, computed, watch } = Vue;
 
 export const RegexView = {
-    components: { FInput },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">

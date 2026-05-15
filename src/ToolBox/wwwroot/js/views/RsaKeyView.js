@@ -1,10 +1,6 @@
-import { IconRefresh, IconDiff, IconArrowRight, IconUser, IconLockAlt } from '../components/icon.js';
-import { toast } from '../components/Toast.js';
-
 const { ref, onMounted } = Vue;
 
 export const RsaKeyView = {
-    components: { IconRefresh, IconDiff, IconArrowRight, IconUser, IconLockAlt },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">

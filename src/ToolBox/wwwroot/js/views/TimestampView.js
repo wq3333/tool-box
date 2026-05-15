@@ -1,9 +1,6 @@
-import { IconClockArrow, IconCalendar } from '../components/icon.js';
-
 const { ref, onMounted } = Vue;
 
 export const TimestampView = {
-    components: { IconClockArrow, IconCalendar },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">

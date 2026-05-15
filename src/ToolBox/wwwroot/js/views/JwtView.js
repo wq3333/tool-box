@@ -1,12 +1,6 @@
-import { FInput } from '../components/FInput.js';
-import { CopyButton } from '../components/CopyButton.js';
-import { toast } from '../components/Toast.js';
-import { IconLock, IconCircleCheck } from '../components/icon.js';
-
-const { ref, computed } = Vue;
+const { ref } = Vue;
 
 export const JwtView = {
-    components: { FInput, CopyButton, IconLock, IconCircleCheck },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">

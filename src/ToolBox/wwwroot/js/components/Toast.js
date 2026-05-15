@@ -1,4 +1,4 @@
-const { ref, reactive } = Vue;
+const { reactive } = Vue;
 
 const state = reactive({ toasts: [] });
 let toastId = 0;

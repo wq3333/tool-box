@@ -1,11 +1,6 @@
-import { FInput } from '../components/FInput.js';
-import { CopyButton } from '../components/CopyButton.js';
-import { IconLock, IconRefresh } from '../components/icon.js';
-
 const { ref, onMounted } = Vue;
 
 export const GuidView = {
-    components: { FInput, CopyButton, IconLock, IconRefresh },
     template: `
     <div class="flex-1 overflow-hidden flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex-1 overflow-hidden flex flex-col gap-4">

@@ -1,10 +1,6 @@
-import { IconDownload, IconUpload, IconFile, IconClose } from '../components/icon.js';
-import { toast } from '../components/Toast.js';
-
 const { ref, computed } = Vue;
 
 export const FileBase64View = {
-    components: { IconDownload, IconUpload, IconFile, IconClose },
     template: `
     <div class="h-full flex flex-col gap-3 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
