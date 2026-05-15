@@ -1,10 +1,11 @@
+import { CopyButton } from '../components/CopyButton.js';
 import { toast } from '../components/Toast.js';
-import { IconLock,IconUnlock } from '../components/icon.js';
+import { IconLock, IconUnlock } from '../components/icon.js';
 
 const { ref } = Vue;
 
 export const AesView = {
-    components: { IconLock,IconUnlock },
+    components: { IconLock, IconUnlock, CopyButton },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
@@ -44,7 +45,7 @@ export const AesView = {
                 </FButton>
             </div>
 
-            <div v-if="result" class="flex flex-col gap-3 flex-1 min-h-0">
+            <div class="flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
                     <label class="text-sm font-semibold text-slate-700">输出</label>
                     <CopyButton :text="result"></CopyButton>
@@ -67,14 +68,20 @@ export const AesView = {
             try {
                 const res = await api('POST', '/encryption/aes/encrypt', { plaintext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
                 result.value = res.data;
-            } catch(e) { toast.error('加密失败: ' + e.message); }
+            } catch (e) {
+                result.value = e.message;
+                toast.error('加密失败: ' + e.message);
+            }
         };
 
         const decrypt = async () => {
             try {
                 const res = await api('POST', '/encryption/aes/decrypt', { ciphertext: input.value, key: key.value, iv: iv.value || null, mode: mode.value, padding: padding.value });
                 result.value = res.data;
-            } catch(e) { toast.error('解密失败: ' + e.message); }
+            } catch (e) {
+                result.value = e.message;
+                toast.error('解密失败: ' + e.message);
+            }
         };
 
         const refresh = () => {

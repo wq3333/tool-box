@@ -1,6 +1,6 @@
 import { FInput } from '../components/FInput.js';
 
-const { ref, watch } = Vue;
+const { ref, computed, watch } = Vue;
 
 export const RegexView = {
     components: { FInput },
@@ -22,9 +22,9 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
+                    <FInput v-model="currentPattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">测试文本</label>
-                    <textarea v-model="input" placeholder="输入要测试的文本..."
+                    <textarea v-model="currentInput" placeholder="输入要测试的文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
@@ -36,9 +36,9 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
                     <label class="text-sm font-semibold text-slate-700">匹配结果</label>
-                    <CopyButton v-if="result" :text="result"></CopyButton>
+                    <CopyButton v-if="currentResult" :text="currentResult"></CopyButton>
                 </div>
-                <textarea v-model="result" readonly placeholder="匹配结果..."
+                <textarea v-model="currentResult" readonly placeholder="匹配结果..."
                     class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
             </div>
         </div>
@@ -47,12 +47,12 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
+                    <FInput v-model="replacePattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">替换为</label>
                     <input v-model="replacement" type="text" placeholder="输入替换内容..."
                         class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
                     <label class="text-sm font-semibold text-slate-700">输入文本</label>
-                    <textarea v-model="input" placeholder="输入要替换的文本..."
+                    <textarea v-model="replaceInput" placeholder="输入要替换的文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
@@ -75,9 +75,9 @@ export const RegexView = {
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
                     <label class="text-sm font-semibold text-slate-700">正则表达式</label>
-                    <FInput v-model="pattern" placeholder="输入正则表达式..."></FInput>
+                    <FInput v-model="splitPattern" placeholder="输入正则表达式..."></FInput>
                     <label class="text-sm font-semibold text-slate-700">输入文本</label>
-                    <textarea v-model="input" placeholder="输入要分割的文本..."
+                    <textarea v-model="splitInput" placeholder="输入要分割的文本..."
                         class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
                 </div>
             </div>
@@ -119,12 +119,59 @@ export const RegexView = {
             { key: 'split', label: '分割' },
             { key: 'templates', label: '常用模板' }
         ];
-        const pattern = ref('');
+        
+        const patterns = ref({
+            match: '',
+            replace: '',
+            split: ''
+        });
+        const inputs = ref({
+            match: '',
+            replace: '',
+            split: ''
+        });
+        const results = ref({
+            match: '',
+            replace: '',
+            split: ''
+        });
+        
         const replacement = ref('');
-        const input = ref('');
-        const result = ref('');
-        const replaceResult = ref('');
-        const splitResult = ref('');
+
+        const currentPattern = computed({
+            get() { return patterns.value[activeTab.value] || ''; },
+            set(v) { patterns.value[activeTab.value] = v; }
+        });
+
+        const currentInput = computed({
+            get() { return inputs.value[activeTab.value] || ''; },
+            set(v) { inputs.value[activeTab.value] = v; }
+        });
+
+        const currentResult = computed({
+            get() { return results.value[activeTab.value] || ''; },
+            set(v) { results.value[activeTab.value] = v; }
+        });
+
+        const replacePattern = computed({
+            get() { return patterns.value.replace || ''; },
+            set(v) { patterns.value.replace = v; }
+        });
+
+        const replaceInput = computed({
+            get() { return inputs.value.replace || ''; },
+            set(v) { inputs.value.replace = v; }
+        });
+
+        const splitPattern = computed({
+            get() { return patterns.value.split || ''; },
+            set(v) { patterns.value.split = v; }
+        });
+
+        const splitInput = computed({
+            get() { return inputs.value.split || ''; },
+            set(v) { inputs.value.split = v; }
+        });
 
         const regexTemplates = [
             { name: '邮箱', pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}', description: '匹配电子邮箱地址' },
@@ -154,13 +201,13 @@ export const RegexView = {
         };
 
         const run = () => {
-            if (!pattern.value) {
-                result.value = '';
+            if (!currentPattern.value) {
+                currentResult.value = '';
                 return;
             }
             try {
-                const re = new RegExp(pattern.value, getFlags());
-                const matches = input.value.matchAll(re);
+                const re = new RegExp(currentPattern.value, getFlags());
+                const matches = currentInput.value.matchAll(re);
                 let output = '';
                 let index = 0;
                 for (const match of matches) {
@@ -171,62 +218,69 @@ export const RegexView = {
                         }
                     }
                 }
-                result.value = output || '没有找到匹配';
+                currentResult.value = output || '没有找到匹配';
             } catch (e) {
-                result.value = '错误: ' + e.message;
+                currentResult.value = '错误: ' + e.message;
             }
         };
 
         const runReplace = () => {
-            if (!pattern.value) {
-                replaceResult.value = '';
+            if (!replacePattern.value) {
+                results.value.replace = '';
                 return;
             }
             try {
-                const re = new RegExp(pattern.value, getFlags());
-                replaceResult.value = input.value.replace(re, replacement.value);
+                const re = new RegExp(replacePattern.value, getFlags());
+                results.value.replace = replaceInput.value.replace(re, replacement.value);
             } catch (e) {
-                replaceResult.value = '错误: ' + e.message;
+                results.value.replace = '错误: ' + e.message;
             }
         };
 
         const runSplit = () => {
-            if (!pattern.value) {
-                splitResult.value = '';
+            if (!splitPattern.value) {
+                results.value.split = '';
                 return;
             }
             try {
-                const re = new RegExp(pattern.value, 'g');
-                const parts = input.value.split(re);
-                splitResult.value = parts.map((s, i) => `${i}: ${s}`).join('\n');
+                const re = new RegExp(splitPattern.value, 'g');
+                const parts = splitInput.value.split(re);
+                results.value.split = parts.map((s, i) => `${i}: ${s}`).join('\n');
             } catch (e) {
-                splitResult.value = '错误: ' + e.message;
+                results.value.split = '错误: ' + e.message;
             }
         };
 
         const selectTemplate = (item) => {
-            pattern.value = item.pattern;
+            patterns.value.match = item.pattern;
             activeTab.value = 'match';
         };
 
         const refresh = () => {
             activeTab.value = 'match';
-            pattern.value = '';
+            patterns.value = { match: '', replace: '', split: '' };
+            inputs.value = { match: '', replace: '', split: '' };
+            results.value = { match: '', replace: '', split: '' };
             replacement.value = '';
-            input.value = '';
-            result.value = '';
-            replaceResult.value = '';
-            splitResult.value = '';
         };
 
-        watch(pattern, () => {
+        watch(currentPattern, () => {
             if (activeTab.value === 'match') {
                 run();
             }
         });
 
         return {
-            activeTab, tabs, pattern, replacement, input, result, replaceResult, splitResult, regexTemplates,
+            activeTab, tabs, currentPattern, replacement, currentInput, currentResult,
+            replacePattern, replaceInput, replaceResult: computed({
+                get() { return results.value.replace; },
+                set(v) { results.value.replace = v; }
+            }),
+            splitPattern, splitInput, splitResult: computed({
+                get() { return results.value.split; },
+                set(v) { results.value.split = v; }
+            }),
+            regexTemplates,
             run, runReplace, runSplit, selectTemplate, refresh
         };
     }

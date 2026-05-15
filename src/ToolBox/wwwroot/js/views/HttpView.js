@@ -1,83 +1,76 @@
 import { FInput } from '../components/FInput.js';
+import { CopyButton } from '../components/CopyButton.js';
+import { IconPlay, IconPlus, IconTrash } from '../components/icon.js';
 
 const { ref, computed } = Vue;
 
 export const HttpView = {
-    components: { FInput },
+    components: { FInput, CopyButton, IconPlay, IconPlus, IconTrash },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
-        <div class="flex-none flex items-center justify-between">
-            <div></div>
-            <label class="flex items-center gap-2 cursor-pointer p-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
-                <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
-                <span class="text-sm text-slate-600">本地模式</span>
-            </label>
-        </div>
-
         <div class="flex-1 min-h-0 flex flex-col gap-4">
             <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
-                <FSingleSelect v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
+                <FSingleSelect style="width:100px" class="h-10" v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
                 <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
-                <FButton @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
+                <label class="flex h-10 items-center gap-2 cursor-pointer p-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
+                    <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
+                    <span class="text-sm text-slate-600">本地模式</span>
+                </label>
+                <FButton @click="send" type="primary" :loading="loading" class="h-10 flex-1 lg:flex-none">
+                    <IconPlay :size="20" />
                     {{ loading ? '请求中...' : '发送' }}
                 </FButton>
             </div>
 
-            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="flex flex-col gap-3">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-hidden">
+                <div class="flex flex-col gap-3 overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col gap-3 p-5">
                         <div class="flex items-center justify-between mb-3">
                             <label class="text-sm font-semibold text-slate-700">请求头</label>
-                            <FButton type="default" size="sm" @click="addHeader" class="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                添加
-                            </FButton>
                         </div>
-                        <div class="flex flex-col gap-2 max-h-[120px] overflow-y-auto">
+                        <div class="flex flex-col gap-2 overflow-y-auto">
                             <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
                                 <FInput v-model="h.key" placeholder="键" class="flex-1 min-w-[80px]"></FInput>
                                 <FInput v-model="h.value" placeholder="值" class="flex-1 min-w-[80px]"></FInput>
                                 <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
+                                    <IconTrash :size="14" />
                                 </button>
                             </div>
                         </div>
+                        <div class="flex-none">
+                            <FButton type="default" size="sm" @click="addHeader"><IconPlus :size="14" />添加请求头</FButton>
+                        </div>
                     </div>
 
-                    <div v-if="method !== 'GET'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+                    <div v-if="method !== 'GET'" class="bg-white rounded-xl overflow-hidden shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
                         <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                            <label class="text-sm font-semibold text-slate-700">请求体</label>
+                            <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">请求体</label>
                             <FSingleSelect v-model="contentType"
                                 :options="[{value:'application/json',label:'application/json'},{value:'application/x-www-form-urlencoded',label:'application/x-www-form-urlencoded'},{value:'multipart/form-data',label:'multipart/form-data'},{value:'text/plain',label:'text/plain'},{value:'text/xml',label:'text/xml'}]"></FSingleSelect>
                         </div>
-                        <div v-if="contentType === 'multipart/form-data' || contentType === 'application/x-www-form-urlencoded'" class="flex flex-col gap-2 flex-1 min-h-0">
-                            <div class="flex flex-col gap-2 max-h-[150px] overflow-y-auto">
+                        <div v-if="contentType === 'multipart/form-data' || contentType === 'application/x-www-form-urlencoded'" class="overflow-hidden flex flex-col gap-2 flex-1 min-h-0">
+                            <div class="flex flex-col gap-2 overflow-y-auto">
                                 <div v-for="(f, i) in formFields" :key="i" class="flex gap-2 items-center">
-                                    <FSingleSelect v-if="contentType === 'multipart/form-data'" v-model="f.type" class="flex-shrink-0"
+                                    <FSingleSelect style="width:80px" class="h-10" v-if="contentType === 'multipart/form-data'" v-model="f.type" class="flex-shrink-0"
                                         :options="[{value:'text',label:'文本'},{value:'file',label:'文件'}]"></FSingleSelect>
                                     <FInput v-model="f.key" placeholder="字段名" class="flex-1 min-w-[80px]"></FInput>
-                                    <input v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" type="text" v-model="f.value" placeholder="字段值"
-                                        class="flex-1 min-w-[80px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    <input v-else type="file" :ref="el => { if (el) f.fileRef = el }"
-                                        class="flex-1 min-w-[80px] text-xs"
-                                        @change="f.fileName = f.fileRef.files[0]?.name || ''">
-                                    <span v-if="f.type === 'file' && f.fileName" class="text-xs text-slate-500 truncate max-w-[100px]">{{ f.fileName }}</span>
+                                    <div v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" class="flex-1 flex">
+                                        <input type="text" v-model="f.value" placeholder="字段值"
+                                            class="flex-1 min-w-[80px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    </div>
+                                    <div v-else class="flex-1 flex gap-2">
+                                        <span v-if="f.type === 'file' && f.fileName" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ f.fileName }}</span>
+                                        <input v-else type="file" :ref="el => { if (el) f.fileRef = el }"
+                                            class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            @change="f.fileName = f.fileRef.files[0]?.name || ''">
+                                    </div>
                                     <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        <IconTrash :size="14" />
                                     </button>
                                 </div>
                             </div>
                             <div class="flex-none">
-                                <FButton type="default" size="sm" @click="addFormField">+ 添加字段</FButton>
+                                <FButton type="default" size="sm" @click="addFormField"><IconPlus :size="14" />添加字段</FButton>
                             </div>
                         </div>
                         <textarea v-else v-model="body" placeholder="请求体内容..."
@@ -96,7 +89,7 @@ export const HttpView = {
 
                     <div class="flex-none">
                         <label class="block text-sm font-semibold text-slate-700 mb-2">响应头</label>
-                        <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[100px] overflow-y-auto">
+                        <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[150px] overflow-y-auto">
                             <div v-for="(v, k) in response.headers" :key="k" class="flex flex-wrap">
                                 <span class="text-slate-500">{{ k }}:</span> <span class="text-slate-700 ml-1">{{ v }}</span>
                             </div>
@@ -123,9 +116,7 @@ export const HttpView = {
                 </div>
 
                 <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col items-center justify-center text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
+                    <IconPlay class="w-12 h-12 mb-3 text-slate-300" />
                     <span class="text-sm">发送请求后响应将显示在这里</span>
                 </div>
             </div>
@@ -135,7 +126,7 @@ export const HttpView = {
     setup() {
         const method = ref('GET');
         const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-        const url = ref('');
+        const url = ref('https://example.com/api');
         const headers = ref([{ key: '', value: '' }]);
         const contentType = ref('application/json');
         const body = ref('');

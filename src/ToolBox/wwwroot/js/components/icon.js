@@ -59,6 +59,8 @@ export const IconSuccess = icon('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><
 export const IconError = icon('<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>', 16);
 export const IconWarning = icon('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', 16);
 export const IconInfo = icon('<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>', 16);
+export const IconPlay = icon('<path d="M13 10V3L4 14h7v7l9-11h-7z"/>');
+export const IconCircleCheck = icon('<circle cx="12" cy="12" r="10"/><polyline points="16 10 10 16 8 14"/>');
 
 const navIconMap = {
     'clock': IconClock,
@@ -79,10 +81,10 @@ const navIconMap = {
 };
 
 export const NavIcon = {
-    props: { icon: String, size: { type: Number, default: 18 } },
+    props: { icon: String, size: { type: Number, default: 18 }, active: { type: Boolean, default: false } },
     template: `
-        <component v-if="iconComponent" :is="iconComponent" :size="size" />
-        <span v-else class="icon-emoji" style="font-size: 18px; line-height: 1;">{{ icon }}</span>
+        <component v-if="iconComponent" :is="iconComponent" :size="size" :class="{ 'text-blue-500': active }" />
+        <span v-else class="icon-emoji" :class="{ 'text-blue-500': active }" style="font-size: 18px; line-height: 1;">{{ icon }}</span>
     `,
     computed: {
         iconComponent() {

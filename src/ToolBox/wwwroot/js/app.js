@@ -7,7 +7,7 @@ import {
     IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconHash, IconChevronDown, NavIcon,
     IconClock, IconEdit, IconDocument, IconText, IconType, IconSearch, IconShield,
     IconKey, IconLock, IconUnlock, IconKeyAlt, IconPackage, IconID, IconGlobe, IconTerminal,
-    IconPlus, IconTrash
+    IconPlus, IconTrash, IconPlay, IconCircleCheck
 } from './components/icon.js';
 import { TimestampView } from './views/TimestampView.js';
 import { JsonView } from './views/JsonView.js';
@@ -112,7 +112,7 @@ const App = {
                             <div class="sidebar-nav-item sidebar-nav-item--clickable"
                                 :class="{ 'sidebar-nav-item--active': isGroupActive(item) }"
                                 @click="toggleGroup(item.group)">
-                                <NavIcon :icon="item.icon" />
+                                <NavIcon :icon="item.icon" :active="isGroupActive(item)" />
                                 <span class="flex-1 whitespace-nowrap">{{ item.label }}</span>
                                 <IconChevronDown class="sidebar-nav-chevron transition-transform duration-200" :class="{ 'rotate-180': openGroups[item.group] }" />
                             </div>
@@ -120,7 +120,7 @@ const App = {
                                 <a v-for="child in item.children" :key="child.route"
                                     @click="navigate(child.route); mobileOpen = false;"
                                     :class="['sidebar-nav-item sidebar-nav-item--sub', currentRoute === child.route ? 'sidebar-nav-item--active' : '']">
-                                    <NavIcon :icon="child.icon" />
+                                    <NavIcon :icon="child.icon" :active="currentRoute === child.route" />
                                     <span class="whitespace-nowrap">{{ child.label }}</span>
                                 </a>
                             </div>
@@ -129,7 +129,7 @@ const App = {
                     <template v-else>
                         <a @click="navigate(item.route); mobileOpen = false;"
                             :class="['sidebar-nav-item', currentRoute === item.route ? 'sidebar-nav-item--active' : '']">
-                            <NavIcon :icon="item.icon" />
+                            <NavIcon :icon="item.icon" :active="currentRoute === item.route" />
                             <span class="whitespace-nowrap">{{ item.label }}</span>
                         </a>
                     </template>
@@ -304,6 +304,8 @@ app.component('IconChevronDown', IconChevronDown);
 app.component('NavIcon', NavIcon);
 app.component('IconPlus', IconPlus);
 app.component('IconTrash', IconTrash);
+app.component('IconPlay', IconPlay);
+app.component('IconCircleCheck', IconCircleCheck);
 app.mount('#app');
 
 export { FButton, FSingleSelect, CopyButton };

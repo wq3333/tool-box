@@ -1,9 +1,11 @@
 import { FInput } from '../components/FInput.js';
+import { CopyButton } from '../components/CopyButton.js';
+import { IconPlay } from '../components/icon.js';
 
 const { ref, computed } = Vue;
 
 export const HashView = {
-    components: { FInput },
+    components: { FInput, CopyButton, IconPlay },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
@@ -34,13 +36,11 @@ export const HashView = {
             </div>
 
             <FButton type="primary" @click="compute" class="w-full py-3 text-base">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+                <IconPlay :size="20" />
                 计算
             </FButton>
 
-            <div v-if="result" class="flex flex-col gap-3">
+            <div class="flex-1 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
                     <label class="text-sm font-semibold text-slate-700">结果</label>
                     <div class="flex items-center gap-2">
@@ -48,7 +48,7 @@ export const HashView = {
                         <CopyButton :text="result"></CopyButton>
                     </div>
                 </div>
-                <div class="px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
+                <div class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
                     <code class="flex-1 text-sm font-mono text-slate-800 break-all">{{ result }}</code>
                 </div>
             </div>
