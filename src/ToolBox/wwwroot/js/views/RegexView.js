@@ -5,13 +5,13 @@ const { ref, computed, watch } = Vue;
 export const RegexView = {
     components: { FInput },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-1">
                 <div class="flex flex-wrap gap-1">
                     <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
                         :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                                activeTab === tab.key ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100']">
+                                activeTab === tab.key ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-[var(--text-inverse)] shadow-md' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                         {{ tab.label }}
                     </button>
                 </div>
@@ -19,13 +19,13 @@ export const RegexView = {
         </div>
 
         <div v-if="activeTab === 'match'" class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
-                    <label class="text-sm font-semibold text-slate-700">正则表达式</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">正则表达式</label>
                     <FInput v-model="currentPattern" placeholder="输入正则表达式..."></FInput>
-                    <label class="text-sm font-semibold text-slate-700">测试文本</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">测试文本</label>
                     <textarea v-model="currentInput" placeholder="输入要测试的文本..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
 
@@ -33,27 +33,27 @@ export const RegexView = {
                 <FButton type="primary" @click="run" block>匹配</FButton>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">匹配结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">匹配结果</label>
                     <CopyButton v-if="currentResult" :text="currentResult"></CopyButton>
                 </div>
                 <textarea v-model="currentResult" readonly placeholder="匹配结果..."
-                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
             </div>
         </div>
 
         <div v-if="activeTab === 'replace'" class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
-                    <label class="text-sm font-semibold text-slate-700">正则表达式</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">正则表达式</label>
                     <FInput v-model="replacePattern" placeholder="输入正则表达式..."></FInput>
-                    <label class="text-sm font-semibold text-slate-700">替换为</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">替换为</label>
                     <input v-model="replacement" type="text" placeholder="输入替换内容..."
-                        class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400">
-                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
+                        class="px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]">
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">输入文本</label>
                     <textarea v-model="replaceInput" placeholder="输入要替换的文本..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
 
@@ -61,24 +61,24 @@ export const RegexView = {
                 <FButton type="primary" @click="runReplace" block>替换</FButton>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">替换结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">替换结果</label>
                     <CopyButton v-if="replaceResult" :text="replaceResult"></CopyButton>
                 </div>
                 <textarea v-model="replaceResult" readonly placeholder="替换结果..."
-                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
             </div>
         </div>
 
         <div v-if="activeTab === 'split'" class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
-                    <label class="text-sm font-semibold text-slate-700">正则表达式</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">正则表达式</label>
                     <FInput v-model="splitPattern" placeholder="输入正则表达式..."></FInput>
-                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">输入文本</label>
                     <textarea v-model="splitInput" placeholder="输入要分割的文本..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
 
@@ -86,25 +86,25 @@ export const RegexView = {
                 <FButton type="primary" @click="runSplit" block>分割</FButton>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">分割结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">分割结果</label>
                     <CopyButton v-if="splitResult" :text="splitResult"></CopyButton>
                 </div>
                 <textarea v-model="splitResult" readonly placeholder="分割结果..."
-                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
             </div>
         </div>
 
         <template v-if="activeTab === 'templates'">
-            <div class="flex-1 overflow-hidden flex flex-col gap-2 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <label class="text-sm font-semibold text-slate-700 mb-3 block">常用正则表达式</label>
+            <div class="flex-1 overflow-hidden flex flex-col gap-2 bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5">
+                <label class="text-sm font-semibold text-[var(--text-primary)] mb-3 block">常用正则表达式</label>
                 <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
                     <div v-for="(item, index) in regexTemplates" :key="index"
-                        class="p-4 bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-300 cursor-pointer transition-colors"
+                        class="p-4 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg hover:border-[var(--accent)]/50 cursor-pointer transition-colors"
                         @click="selectTemplate(item)">
-                        <div class="text-sm font-medium text-slate-700 mb-1">{{ item.name }}</div>
-                        <div class="text-xs font-mono text-slate-500 truncate">{{ item.pattern }}</div>
+                        <div class="text-sm font-medium text-[var(--text-primary)] mb-1">{{ item.name }}</div>
+                        <div class="text-xs font-mono text-[var(--text-secondary)] truncate">{{ item.pattern }}</div>
                     </div>
                 </div>
             </div>

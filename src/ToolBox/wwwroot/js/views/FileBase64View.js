@@ -6,13 +6,13 @@ const { ref, computed } = Vue;
 export const FileBase64View = {
     components: { IconDownload, IconUpload, IconFile, IconClose },
     template: `
-    <div class="h-full flex flex-col gap-3 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="h-full flex flex-col gap-3 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-1">
                 <div class="flex gap-1">
                     <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
                         :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                                activeTab === tab.key ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100']">
+                                activeTab === tab.key ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-[var(--text-inverse)] shadow-md' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                         {{ tab.label }}
                     </button>
                 </div>
@@ -20,21 +20,21 @@ export const FileBase64View = {
         </div>
 
         <div v-if="activeTab === 'encode'" class="flex-none">
-            <label class="flex items-center gap-2 cursor-pointer p-3 bg-white rounded-xl shadow-sm border border-slate-200 hover:border-slate-300 transition-colors">
-                <input type="checkbox" v-model="encode.includePrefix" class="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 focus:ring-offset-0">
-                <span class="text-sm text-slate-600">包含数据URI前缀 (data:xxx;base64,)</span>
+            <label class="flex items-center gap-2 cursor-pointer p-3 bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] hover:border-[var(--border-strong)] transition-colors">
+                <input type="checkbox" v-model="encode.includePrefix" class="w-4 h-4 rounded border-[var(--border-strong)] text-[var(--accent)] focus:ring-[var(--accent)] focus:ring-offset-0">
+                <span class="text-sm text-[var(--text-secondary)]">包含数据URI前缀 (data:xxx;base64,)</span>
             </label>
         </div>
 
         <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-3">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
-                    <label class="text-sm font-semibold text-slate-700">{{ activeTab === 'encode' ? '输入文件' : '输入Base64' }}</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">{{ activeTab === 'encode' ? '输入文件' : '输入Base64' }}</label>
                     <input type="file" ref="fileInputRef" @change="onFileSelect" class="hidden">
                     
                     <div v-if="activeTab === 'encode'" class="flex-1 min-h-[120px]">
                         <div v-if="encode.fileName" class="h-full flex flex-col items-center justify-center">
-                            <div class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 flex items-center justify-between">
+                            <div class="w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <IconFile />
                                     {{ encode.fileName }}
@@ -47,20 +47,20 @@ export const FileBase64View = {
                         <div 
                             v-else
                             class="h-full flex flex-col items-center justify-center border-2 border-dashed rounded-lg transition-all duration-200"
-                            :class="encode.isDragging ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:border-slate-300 bg-slate-50'"
+                            :class="encode.isDragging ? 'border-[var(--accent)] bg-[var(--accent-light)]' : 'border-[var(--border-subtle)] hover:border-[var(--border-strong)] bg-[var(--bg-input)]'"
                             @dragenter.prevent="handleEncodeDragOver"
                             @dragover.prevent="handleEncodeDragOver"
                             @dragleave.prevent="handleEncodeDragLeave"
                             @drop.prevent="handleEncodeDrop"
                             @click="triggerFileInput"
                         >
-                            <IconUpload class="w-12 h-12 mb-3 transition-colors" :class="encode.isDragging ? 'text-blue-500' : 'text-slate-400'"/>
-                            <span class="text-sm font-medium" :class="encode.isDragging ? 'text-blue-600' : 'text-slate-500'">{{ encode.isDragging ? '松开以上传文件' : '点击或拖放文件到此处' }}</span>
+                            <IconUpload class="w-12 h-12 mb-3 transition-colors" :class="encode.isDragging ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'"/>
+                            <span class="text-sm font-medium" :class="encode.isDragging ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'">{{ encode.isDragging ? '松开以上传文件' : '点击或拖放文件到此处' }}</span>
                         </div>
                     </div>
                     
                     <textarea v-if="activeTab === 'decode'" v-model="decode.input" placeholder="请输入Base64内容..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
 
@@ -68,9 +68,9 @@ export const FileBase64View = {
                 <FButton type="primary" @click="execute" block>{{ executeLabel }}</FButton>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
                     <div class="flex gap-2">
                         <FButton v-if="decode.blob" size="sm" type="success" @click="downloadDecodeResult">
                             <IconDownload :size="10" />
@@ -81,23 +81,23 @@ export const FileBase64View = {
                 
                 <template v-if="activeTab === 'encode'">
                     <textarea v-model="encode.result" readonly placeholder="Base64 编码结果..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
-                    <div v-if="encode.isImagePreview" class="flex-1 min-h-[100px] flex items-center justify-center bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
+                    <div v-if="encode.isImagePreview" class="flex-1 min-h-[100px] flex items-center justify-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-subtle)] overflow-hidden">
                         <img :src="encode.imagePreviewUrl" class="max-w-full max-h-[300px] object-contain">
                     </div>
                 </template>
                 
                 <template v-else-if="activeTab === 'decode'">
-                    <div v-if="decode.blob" class="flex-1 min-h-[100px] flex flex-col items-center justify-center bg-slate-50 rounded-lg border border-slate-200 p-4">
+                    <div v-if="decode.blob" class="flex-1 min-h-[100px] flex flex-col items-center justify-center bg-[var(--bg-input)] rounded-lg border border-[var(--border-subtle)] p-4">
                         <img v-if="decode.isImage" :src="decode.url" class="max-w-full max-h-[250px] object-contain rounded-lg">
                         <div v-else class="text-center">
-                            <IconUpload :size="48" class="mx-auto mb-2 text-slate-300" />
-                            <span class="text-sm text-slate-600">文件已解码，点击下载按钮保存</span>
+                            <IconUpload :size="48" class="mx-auto mb-2 text-[var(--text-tertiary)]" />
+                            <span class="text-sm text-[var(--text-secondary)]">文件已解码，点击下载按钮保存</span>
                         </div>
                     </div>
-                    <div v-else class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-slate-400 bg-slate-50 rounded-lg border border-slate-200">
-                        <IconFile :size="48" class="mb-3 text-slate-300" />
-                        <span class="text-sm">解码结果将在此显示...</span>
+                    <div v-else class="flex-1 min-h-[100px] flex flex-col items-center justify-center text-[var(--text-tertiary)] bg-[var(--bg-input)] rounded-lg border border-[var(--border-subtle)]">
+                        <IconFile :size="48" class="mb-3 text-[var(--text-tertiary)]" />
+                        <span class="text-sm text-[var(--text-secondary)]">解码结果将在此显示...</span>
                     </div>
                 </template>
             </div>

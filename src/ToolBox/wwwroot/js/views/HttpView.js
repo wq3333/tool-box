@@ -7,14 +7,14 @@ const { ref, computed } = Vue;
 export const HttpView = {
     components: { FInput, CopyButton, IconPlay, IconPlus, IconTrash },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none flex flex-col lg:flex-row lg:items-center gap-3">
             <FInput v-model="url" placeholder="https://example.com/api" class="flex-1"></FInput>
             <div class="flex flex-row gap-2">
                 <FSingleSelect style="width:100px" class="h-10" v-model="method" :options="methods.map(m => ({ value: m, label: m }))"></FSingleSelect>
-                <label class="flex h-10 items-center gap-2 cursor-pointer p-2 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
-                    <input type="checkbox" v-model="localMode" class="w-4 h-4 text-blue-500 border-slate-300 focus:ring-blue-500">
-                    <span class="text-sm text-slate-600">本地模式</span>
+                <label class="flex h-10 items-center gap-2 cursor-pointer p-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-subtle)] hover:border-[var(--border)] transition-colors">
+                    <input type="checkbox" v-model="localMode" class="w-4 h-4 text-[var(--accent)] border-[var(--border-subtle)] focus:ring-[var(--accent)]">
+                    <span class="text-sm text-[var(--text-secondary)]">本地模式</span>
                 </label>
                 <FButton class="h-9 self-center" @click="send" type="primary" :loading="loading" class="flex-1 lg:flex-none">
                     <IconPlay :size="20" />
@@ -25,15 +25,15 @@ export const HttpView = {
 
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-auto">
             <div class="flex flex-col gap-3">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3 p-5">
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] flex flex-col gap-3 p-5">
                     <div class="flex items-center justify-between mb-3">
-                        <label class="text-sm font-semibold text-slate-700">请求头</label>
+                        <label class="text-sm font-semibold text-[var(--text-primary)]">请求头</label>
                     </div>
                     <div class="flex-1 flex flex-col gap-2 overflow-y-auto">
                         <div v-for="(h, i) in headers" :key="i" class="flex gap-2">
                             <FInput v-model="h.key" placeholder="键" class="flex-1 "></FInput>
                             <FInput v-model="h.value" placeholder="值" class="flex-1 "></FInput>
-                            <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                            <button @click="removeHeader(i)" class="w-8 h-8 flex items-center justify-center text-[var(--text-placeholder)] hover:text-[var(--danger)] hover:bg-[var(--danger-light)] rounded-lg transition-colors">
                                 <IconTrash :size="14" />
                             </button>
                         </div>
@@ -43,9 +43,9 @@ export const HttpView = {
                     </div>
                 </div>
 
-                <div v-if="method !== 'GET'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3">
+                <div v-if="method !== 'GET'" class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3">
                     <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                        <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">请求体</label>
+                        <label class="text-sm font-semibold text-[var(--text-primary)] whitespace-nowrap">请求体</label>
                         <FSingleSelect v-model="contentType"
                             :options="[{value:'application/json',label:'application/json'},{value:'application/x-www-form-urlencoded',label:'application/x-www-form-urlencoded'},{value:'multipart/form-data',label:'multipart/form-data'},{value:'text/plain',label:'text/plain'},{value:'text/xml',label:'text/xml'}]"></FSingleSelect>
                     </div>
@@ -56,14 +56,14 @@ export const HttpView = {
                             <FInput v-model="f.key" placeholder="字段名" class="flex-1 overflow-hidden"></FInput>
                             <FInput v-if="f.type === 'text' || contentType === 'application/x-www-form-urlencoded'" v-model="f.value" placeholder="字段值" class="flex-1 overflow-hidden"></FInput>
                             <div v-else class="flex-1 flex gap-2 overflow-hidden">
-                                <span v-if="f.type === 'file' && f.fileName" class="flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ f.fileName }}</span>
-                                <span v-else @click="f.fileRef.click()" class="flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">选择文件</span>
+                                <span v-if="f.type === 'file' && f.fileName" class="flex-1 h-10 px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent">{{ f.fileName }}</span>
+                                <span v-else @click="f.fileRef.click()" class="flex-1 h-10 px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent">选择文件</span>
                                 <input type="file" :ref="el => { if (el) f.fileRef = el }"
-                                    class="hidden flex-1 h-10 px-3 py-2 bg-slate-50 border border-slate-200 rounded text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="hidden flex-1 h-10 px-3 py-2 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded text-sm text-[var(--text-primary)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"
                                     placeholder="选择文件"
                                     @change="f.fileName = f.fileRef.files[0]?.name || ''">
                             </div>
-                            <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                            <button @click="removeFormField(i)" class="w-8 h-8 flex items-center justify-center text-[var(--text-placeholder)] hover:text-[var(--danger)] hover:bg-[var(--danger-light)] rounded-lg transition-colors">
                                 <IconTrash :size="14" />
                             </button>
                         </div>
@@ -72,49 +72,49 @@ export const HttpView = {
                         </div>
                     </div>
                     <textarea v-else v-model="body" placeholder="请求体内容..."
-                        class="flex-1 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        class="flex-1 w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] resize-none outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent"></textarea>
                 </div>
             </div>
 
-            <div v-if="response" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1">
+            <div v-if="response" class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1">
                 <div class="flex items-center gap-3">
-                    <span :class="['px-3 py-1.5 rounded-lg text-sm font-bold', response.statusCode < 300 ? 'bg-emerald-100 text-emerald-700' : response.statusCode < 400 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700']">
+                    <span :class="['px-3 py-1.5 rounded-lg text-sm font-bold', response.statusCode < 300 ? 'bg-[var(--success-light)] text-[var(--success)]' : response.statusCode < 400 ? 'bg-[var(--warning-light)] text-[var(--warning)]' : 'bg-[var(--danger-light)] text-[var(--danger)]']">
                         {{ response.statusCode }} {{ response.statusText }}
                     </span>
-                    <span class="text-sm text-slate-500">{{ response.duration }}ms</span>
-                    <span v-if="localMode" class="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-full">本地模式</span>
+                    <span class="text-sm text-[var(--text-placeholder)]">{{ response.duration }}ms</span>
+                    <span v-if="localMode" class="text-sm text-[var(--accent)] bg-[var(--accent-light)] px-2 py-1 rounded-full">本地模式</span>
                 </div>
 
                 <div class="flex-none">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">响应头</label>
-                    <div class="bg-slate-50 rounded-lg px-4 py-3 text-sm font-mono max-h-[150px] overflow-y-auto">
+                    <label class="block text-sm font-semibold text-[var(--text-primary)] mb-2">响应头</label>
+                    <div class="bg-[var(--bg-input)] rounded-lg px-4 py-3 text-sm font-mono max-h-[150px] overflow-y-auto">
                         <div v-for="(v, k) in response.headers" :key="k" class="flex flex-wrap">
-                            <span class="text-slate-500">{{ k }}:</span> <span class="text-slate-700 ml-1">{{ v }}</span>
+                            <span class="text-[var(--text-placeholder)]">{{ k }}:</span> <span class="text-[var(--text-primary)] ml-1">{{ v }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex-1 flex flex-col">
                     <div class="flex items-center justify-between mb-3">
-                        <label class="text-sm font-semibold text-slate-700">响应体</label>
+                        <label class="text-sm font-semibold text-[var(--text-primary)]">响应体</label>
                         <div class="flex items-center gap-2">
-                            <button @click="responseView = 'raw'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'raw' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">Raw</button>
-                            <button @click="responseView = 'html'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'html' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">HTML</button>
-                            <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'preview' ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100']">图片预览</button>
+                            <button @click="responseView = 'raw'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'raw' ? 'bg-[var(--accent-light)] text-[var(--accent)]' : 'text-[var(--text-placeholder)] hover:bg-[var(--bg-hover)]']">Raw</button>
+                            <button @click="responseView = 'html'" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'html' ? 'bg-[var(--accent-light)] text-[var(--accent)]' : 'text-[var(--text-placeholder)] hover:bg-[var(--bg-hover)]']">HTML</button>
+                            <button @click="responseView = 'preview'" v-if="isImageResponse" :class="['px-3 py-1.5 text-sm rounded-lg', responseView === 'preview' ? 'bg-[var(--accent-light)] text-[var(--accent)]' : 'text-[var(--text-placeholder)] hover:bg-[var(--bg-hover)]']">图片预览</button>
                             <CopyButton :text="response.body"></CopyButton>
                         </div>
                     </div>
                     <textarea v-if="responseView === 'raw'" :value="response.body" readonly
-                        class="flex-1 w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 resize-none outline-none"></textarea>
-                    <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 w-full rounded-lg border border-slate-200 bg-white"></iframe>
-                    <div v-else class="flex-1 flex items-center justify-center overflow-auto bg-slate-50 rounded-lg">
-                        <img :src="response.body" class="max-w-full max-h-full object-contain rounded-lg border border-slate-200"></img>
+                        class="flex-1 w-full px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] resize-none outline-none"></textarea>
+                    <iframe v-else-if="responseView === 'html'" v-bind:srcdoc="response.body" class="flex-1 w-full rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)]"></iframe>
+                    <div v-else class="flex-1 flex items-center justify-center overflow-auto bg-[var(--bg-input)] rounded-lg">
+                        <img :src="response.body" class="max-w-full max-h-full object-contain rounded-lg border border-[var(--border-subtle)]"></img>
                     </div>
                 </div>
             </div>
 
-            <div v-else class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col items-center justify-center text-slate-400">
-                <IconPlay class="w-12 h-12 mb-3 text-slate-300" />
+            <div v-else class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col items-center justify-center text-[var(--text-placeholder)]">
+                <IconPlay class="w-12 h-12 mb-3 text-[var(--border-subtle)]" />
                 <span class="text-sm">发送请求后响应将显示在这里</span>
             </div>
         </div>

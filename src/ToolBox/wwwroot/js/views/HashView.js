@@ -7,30 +7,30 @@ const { ref, computed } = Vue;
 export const HashView = {
     components: { FInput, CopyButton, IconPlay },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
+        <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1 min-h-0">
             <div class="flex-1 min-h-0 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
-                    <span class="text-xs text-slate-400">{{ text.length }} 字符</span>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">输入文本</label>
+                    <span class="text-xs text-[var(--text-tertiary)]">{{ text.length }} 字符</span>
                 </div>
                 <textarea v-model="text" placeholder="输入要计算哈希的文本..."
-                    class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
             </div>
 
             <div class="flex flex-col gap-3">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">算法</label>
+                    <label class="block text-sm font-semibold text-[var(--text-primary)] mb-2">算法</label>
                     <div class="flex flex-wrap gap-2">
                         <button v-for="algo in algorithms" :key="algo.value" @click="algorithm = algo.value"
                             :class="['px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                                algorithm === algo.value ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200']">
+                                algorithm === algo.value ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-[var(--text-inverse)] shadow-md' : 'bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                             {{ algo.label }}
                         </button>
                     </div>
                 </div>
                 <div v-if="isHmac" class="flex flex-col gap-2">
-                    <label class="text-sm font-semibold text-slate-700">密钥</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">密钥</label>
                     <FInput v-model="key" placeholder="HMAC密钥" class="w-full"></FInput>
                 </div>
             </div>
@@ -42,14 +42,14 @@ export const HashView = {
 
             <div class="flex-1 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
                     <div class="flex items-center gap-2">
-                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">{{ algorithm.toUpperCase() }}</span>
+                        <span class="text-xs px-2 py-1 bg-[var(--accent-light)] text-[var(--accent)] rounded-full">{{ algorithm.toUpperCase() }}</span>
                         <CopyButton :text="result"></CopyButton>
                     </div>
                 </div>
-                <div class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
-                    <code class="flex-1 text-sm font-mono text-slate-800 break-all">{{ result }}</code>
+                <div class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg">
+                    <code class="flex-1 text-sm font-mono text-[var(--text-primary)] break-all">{{ result }}</code>
                 </div>
             </div>
         </div>

@@ -5,12 +5,12 @@ const { ref, onMounted } = Vue;
 export const StringView = {
     components: { IconDiff, IconRefresh },
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-1">
                 <div class="flex flex-wrap gap-1">
                     <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
-                        :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200', activeTab === tab.key ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100']">
+                        :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200', activeTab === tab.key ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-[var(--text-inverse)] shadow-md' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                         {{ tab.label }}
                     </button>
                 </div>
@@ -19,26 +19,26 @@ export const StringView = {
 
         <div v-if="activeTab === 'diff'" class="flex-1 min-h-0 flex flex-col gap-4">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
-                    <label class="text-sm font-semibold text-slate-700">文本1</label>
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">文本1</label>
                     <textarea v-model="diffText1" placeholder="输入文本1..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
-                    <label class="text-sm font-semibold text-slate-700">文本2</label>
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">文本2</label>
                     <textarea v-model="diffText2" placeholder="输入文本2..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
             <FButton type="primary" @click="computeDiff" class="w-full text-base">
                 <IconDiff :size="20" />
                 比较
             </FButton>
-            <div class="flex-1 min-h-0 overflow-y-auto bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-1">
+            <div class="flex-1 min-h-0 overflow-y-auto bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-4 space-y-1">
                 <div v-for="(line, i) in diffResult" :key="i"
                     :class="['px-3 py-2 rounded-lg text-sm font-mono',
-                        line.type === 'add' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
-                        line.type === 'del' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-slate-50 text-slate-600']">
+                        line.type === 'add' ? 'bg-[var(--success-light)] text-[var(--success)] border border-[var(--success)]/20' :
+                        line.type === 'del' ? 'bg-[var(--danger-light)] text-[var(--danger)] border border-[var(--danger)]/20' : 'bg-[var(--bg-input)] text-[var(--text-primary)]']">
                     <span class="mr-2 font-bold">{{ line.type === 'add' ? '+' : line.type === 'del' ? '-' : '~' }}</span>{{ line.text }}
                 </div>
             </div>
@@ -46,64 +46,64 @@ export const StringView = {
 
         <div v-if="activeTab === 'escape'" class="flex-1 min-h-0 flex flex-col gap-4">
             <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
-                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">输入文本</label>
                     <textarea v-model="escapeInput" placeholder="输入文本..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
                 <div class="flex flex-col self-center w-20 gap-2">
                     <FButton type="primary" @click="doEscape" block>转义</FButton>
                     <FButton type="success" @click="doUnescape" block>去除转义</FButton>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
-                        <label class="text-sm font-semibold text-slate-700">结果</label>
+                        <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
                         <CopyButton :text="escapeResult"></CopyButton>
                     </div>
                     <textarea v-model="escapeResult" readonly
-                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
                 </div>
             </div>
         </div>
 
         <div v-if="activeTab === 'case'" class="flex-1 min-h-0 flex flex-col gap-4">
             <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
-                    <label class="text-sm font-semibold text-slate-700">输入文本</label>
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">输入文本</label>
                     <textarea v-model="caseInput" placeholder="输入文本..."
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
                 <div class="flex flex-col self-center w-20 gap-2">
                     <FButton v-for="ct in caseTypes" :key="ct.value" @click="convertCase(ct.value)" type="primary" block>{{ ct.label }}</FButton>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-3 flex-1 min-h-0">
+                <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-3 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
-                        <label class="text-sm font-semibold text-slate-700">结果</label>
+                        <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
                         <CopyButton :text="caseResult"></CopyButton>
                     </div>
                     <textarea v-model="caseResult" readonly
-                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none"></textarea>
                 </div>
             </div>
         </div>
 
         <div v-if="activeTab === 'random'" class="flex-1 min-h-0 flex flex-col gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4">
                 <div class="flex flex-col lg:flex-row lg:items-center gap-4">
-                    <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">字符集</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)] whitespace-nowrap">字符集</label>
                     <FSingleSelect v-model="randomCharSet" :options="randomCharSetTypes"></FSingleSelect>
-                    <label class="text-sm font-semibold text-slate-700 whitespace-nowrap">生成长度</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)] whitespace-nowrap">生成长度</label>
                     <FInput type="number" v-model.number="randomLength" class="w-24" min="1" max="256"></FInput>
                     <FButton type="primary" @click="generateRandom" class="flex-1 lg:flex-none">
                         <IconRefresh :size="20" />
                         生成
                     </FButton>
                 </div>
-                <div v-if="randomResult" class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div v-if="randomResult" class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
-                    <code class="flex-1 text-sm font-mono text-slate-700">{{ randomResult }}</code>
+                    <code class="flex-1 text-sm font-mono text-[var(--text-primary)]">{{ randomResult }}</code>
                     <CopyButton :text="randomResult"></CopyButton>
                 </div>
             </div>

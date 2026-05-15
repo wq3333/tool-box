@@ -2,13 +2,13 @@ const { ref, computed } = Vue;
 
 export const JsonView = {
     template: `
-    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-1">
                 <div class="flex flex-wrap gap-1">
                     <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key"
                         :class="['px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                                activeTab === tab.key ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100']">
+                                activeTab === tab.key ? 'bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] text-[var(--text-inverse)] shadow-md' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]']">
                         {{ tab.label }}
                     </button>
                 </div>
@@ -16,29 +16,29 @@ export const JsonView = {
         </div>
 
         <div class="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1 min-h-0">
                 <div class="flex-1 min-h-0 flex flex-col gap-3">
-                    <label class="text-sm font-semibold text-slate-700">{{ inputLabel }}</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">{{ inputLabel }}</label>
                     <textarea v-model="currentInput" :placeholder="inputPlaceholder"
-                        class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                        class="flex-1 min-h-0 px-4 py-3 bg-[var(--bg-input)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
                 </div>
             </div>
 
             <div class="flex flex-col gap-3 self-center w-20">
                 <div v-if="activeTab === 'to-csharp'" class="flex flex-col items-center">
-                    <span class="text-xs self-start text-slate-500 mb-1">根类名:</span>
+                    <span class="text-xs self-start text-[var(--text-secondary)] mb-1">根类名:</span>
                     <FInput v-model="rootName" placeholder="Root" class="w-24 text-center"></FInput>
                 </div>
                 <FButton type="primary" @click="execute" block>{{ executeLabel }}</FButton>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 flex-1 min-h-0">
+            <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">结果</label>
+                    <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
                     <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
                 </div>
                 <textarea v-model="currentOutput" readonly :placeholder="outputPlaceholder"
-                    class="flex-1 min-h-0 px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono text-slate-700 outline-none resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-slate-400"></textarea>
+                    class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
             </div>
         </div>
     </div>
