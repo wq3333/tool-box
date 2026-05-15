@@ -1,8 +1,10 @@
 const icon = (svgContent, defaultSize = 18) => ({
     props: {
-        size: { type: Number, default: defaultSize }
+        size: { type: Number, default: defaultSize },
+        stroke: { type: String, default: 'currentColor' },
+        strokeWidth: { type: Number, default: 2 }
     },
-    template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${svgContent}</svg>`
+    template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24" fill="none" :stroke="stroke" :stroke-width="strokeWidth" stroke-linecap="round" stroke-linejoin="round">${svgContent}</svg>`
 });
 
 const iconFilled = (svgContent, defaultSize = 18) => ({
@@ -12,7 +14,7 @@ const iconFilled = (svgContent, defaultSize = 18) => ({
     template: `<svg xmlns="http://www.w3.org/2000/svg" :width="size" :height="size" viewBox="0 0 24 24">${svgContent}</svg>`
 });
 
-export const IconLogo = iconFilled('<rect width="24" height="24" rx="6" fill="var(--accent)"/><path d="M7 8h4v8H7V8zm6 0h4v8h-4V8z" fill="white" opacity="0.9"/><path d="M8 9h2v6H8V9zm6 0h2v6h-2V9z" fill="var(--accent)" opacity="0.3"/>', 28);
+export const IconLogo = iconFilled('<rect width="24" height="24" rx="6" /><path d="M7 8h4v8H7V8zm6 0h4v8h-4V8z" opacity="0.9"/><path d="M8 9h2v6H8V9zm6 0h2v6h-2V9z" opacity="0.3"/>', 28);
 export const IconMenu = icon('<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>', 20);
 export const IconClose = icon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>');
 export const IconX = icon('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>');
@@ -81,10 +83,12 @@ const navIconMap = {
 };
 
 export const NavIcon = {
-    props: { icon: String, size: { type: Number, default: 18 }, active: { type: Boolean, default: false } },
+    props: { icon: String, size: { type: Number, default: 18 }, active: { type: Boolean, default: false }, color: { type: String, default: '#64748b' } },
     template: `
-        <component v-if="iconComponent" :is="iconComponent" :size="size" :class="{ 'text-blue-500': active }" />
-        <span v-else class="icon-emoji" :class="{ 'text-blue-500': active }" style="font-size: 18px; line-height: 1;">{{ icon }}</span>
+        <component v-if="iconComponent" :is="iconComponent" :size="size" 
+            :stroke="color"
+            :class="{ 'text-blue-500': active }" />
+        <span v-else class="icon-emoji" :class="{ 'text-blue-500': active }" :style="{ fontSize: '18px', lineHeight: '1', color: color }">{{ icon }}</span>
     `,
     computed: {
         iconComponent() {

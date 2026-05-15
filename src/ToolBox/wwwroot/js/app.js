@@ -33,35 +33,37 @@ const { createRouter, createWebHashHistory, useRoute, useRouter } = VueRouter;
 const ThemeSymbol = Symbol('theme');
 
 const navItems = [
-    { route: '/timestamp', label: '时间戳', icon: 'clock' },
+    { route: '/timestamp', label: '时间戳', icon: 'clock', color: '#3b82f6' },
     { 
         label: '文本工具', 
         icon: 'edit',
+        color: '#10b981',
         children: [
-            { route: '/json', label: 'JSON工具', icon: 'document' },
-            { route: '/encoding', label: '编码转换', icon: 'type' },
-            { route: '/base64', label: '文件Base64', icon: 'package' },
-            { route: '/string', label: '字符串', icon: 'text' },
-            { route: '/regex', label: '正则测试', icon: 'search' },
+            { route: '/json', label: 'JSON工具', icon: 'document', color: '#10b981' },
+            { route: '/encoding', label: '编码转换', icon: 'type', color: '#8b5cf6' },
+            { route: '/base64', label: '文件Base64', icon: 'package', color: '#f59e0b' },
+            { route: '/string', label: '字符串', icon: 'text', color: '#06b6d4' },
+            { route: '/regex', label: '正则测试', icon: 'search', color: '#ec4899' },
         ],
         group: 'text'
     },
     { 
         label: '加密安全', 
         icon: 'shield',
+        color: '#ef4444',
         children: [
-            { route: '/rsa-key', label: 'RSA密钥', icon: 'key' },
-            { route: '/rsa', label: 'RSA', icon: 'lock' },
-            { route: '/aes', label: 'AES', icon: 'shield' },
-            { route: '/des', label: 'DES', icon: 'unlock' },
-            { route: '/tripledes', label: '3DES', icon: 'key' },
-            { route: '/hash', label: '哈希', icon: 'hash' },
-            { route: '/jwt', label: 'JWT', icon: 'key' },
+            { route: '/rsa-key', label: 'RSA密钥', icon: 'key', color: '#ef4444' },
+            { route: '/rsa', label: 'RSA', icon: 'lock', color: '#6366f1' },
+            { route: '/aes', label: 'AES', icon: 'shield', color: '#84cc16' },
+            { route: '/des', label: 'DES', icon: 'unlock', color: '#f97316' },
+            { route: '/tripledes', label: '3DES', icon: 'key', color: '#a855f7' },
+            { route: '/hash', label: '哈希', icon: 'hash', color: '#0ea5e9' },
+            { route: '/jwt', label: 'JWT', icon: 'key', color: '#d946ef' },
         ],
         group: 'security'
     },
-    { route: '/guid', label: 'GUID', icon: 'id' },
-    { route: '/http', label: 'HTTP', icon: 'globe' },
+    { route: '/guid', label: 'GUID', icon: 'id', color: '#22c55e' },
+    { route: '/http', label: 'HTTP', icon: 'globe', color: '#06b6d4' },
 ];
 
 const ThemePlugin = {
@@ -112,7 +114,7 @@ const App = {
                             <div class="sidebar-nav-item sidebar-nav-item--clickable"
                                 :class="{ 'sidebar-nav-item--active': isGroupActive(item) }"
                                 @click="toggleGroup(item.group)">
-                                <NavIcon :icon="item.icon" :active="isGroupActive(item)" />
+                                <NavIcon :icon="item.icon" :active="isGroupActive(item)" :color="item.color" />
                                 <span class="flex-1 whitespace-nowrap">{{ item.label }}</span>
                                 <IconChevronDown class="sidebar-nav-chevron transition-transform duration-200" :class="{ 'rotate-180': openGroups[item.group] }" />
                             </div>
@@ -120,7 +122,7 @@ const App = {
                                 <a v-for="child in item.children" :key="child.route"
                                     @click="navigate(child.route); mobileOpen = false;"
                                     :class="['sidebar-nav-item sidebar-nav-item--sub', currentRoute === child.route ? 'sidebar-nav-item--active' : '']">
-                                    <NavIcon :icon="child.icon" :active="currentRoute === child.route" />
+                                    <NavIcon :icon="child.icon" :active="currentRoute === child.route" :color="child.color" />
                                     <span class="whitespace-nowrap">{{ child.label }}</span>
                                 </a>
                             </div>
@@ -129,7 +131,7 @@ const App = {
                     <template v-else>
                         <a @click="navigate(item.route); mobileOpen = false;"
                             :class="['sidebar-nav-item', currentRoute === item.route ? 'sidebar-nav-item--active' : '']">
-                            <NavIcon :icon="item.icon" :active="currentRoute === item.route" />
+                            <NavIcon :icon="item.icon" :active="currentRoute === item.route" :color="item.color" />
                             <span class="whitespace-nowrap">{{ item.label }}</span>
                         </a>
                     </template>
