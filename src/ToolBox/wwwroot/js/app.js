@@ -89,7 +89,7 @@ const ThemePlugin = {
 const App = {
     components: { FButton, IconLogo, IconMenu, IconClose, IconSun, IconMoon, IconChevronDown, NavIcon, ToastContainer },
     template: `
-    <div class="flex h-full overflow-hidden">
+    <div class="flex h-[100dvh] overflow-hidden">
         <ToastContainer />
         <div v-if="mobileOpen && isMobile" class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-200" :class="mobileOpen ? 'opacity-100' : 'opacity-0'" @click="mobileOpen = false"></div>
         <aside class="z-3000 sidebar bg-[var(--bg-surface)] border-r border-[var(--border-subtle)] flex flex-col shrink-0 z-30"
