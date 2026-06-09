@@ -18,6 +18,18 @@ export const HttpView = {
             </div>
         </div>
 
+        <div v-if="localMode" class="flex-none bg-[var(--warning-light)] border border-[var(--warning)] rounded-xl p-4 flex flex-col gap-3">
+            <div class="flex items-start gap-2">
+                <span class="text-[var(--warning)] text-sm font-semibold whitespace-nowrap">跨域提示</span>
+                <span class="text-sm text-[var(--text-primary)]">
+                    本地模式可能遇到跨域问题，请安装扩展
+                    <a href="https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=zh-CN" target="_blank" class="text-[var(--accent)] underline">Allow CORS Access Control</a>
+                    ，<a href="CorsHelp.png" target="_blank" class="text-[var(--accent)] underline">并配置</a>
+                </span>
+            </div>
+            
+        </div>
+
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-auto">
             <div class="flex flex-col gap-3">
                 <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] flex flex-col gap-3 p-5">
