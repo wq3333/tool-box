@@ -18,25 +18,30 @@ export const HttpView = {
             </div>
         </div>
 
-        <div v-if="localMode" class="flex-none bg-[var(--warning-light)] border border-[var(--warning)] rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-start gap-2">
-                <span class="text-[var(--warning)] text-sm font-semibold whitespace-nowrap">跨域问题</span>
-                <span class="text-sm text-[var(--text-primary)]">
-                    本地模式可能遇到跨域问题，请安装扩展
-                    <a href="https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=zh-CN" target="_blank" class="text-[var(--accent)] underline">Allow CORS Access Control</a>
-                    ，<a href="CorsHelp.png" target="_blank" class="text-[var(--accent)] underline">并配置</a>
-                </span>
+        <div v-if="localMode" class="flex-none bg-[var(--warning-light)] border border-[var(--warning)] rounded-xl">
+            <div @click="showHelp = !showHelp" class="flex items-center justify-between p-4 cursor-pointer select-none">
+                <span class="text-[var(--warning)] text-sm font-semibold">本地模式帮助</span>
+                <span class="text-[var(--text-secondary)] text-sm transition-transform" :class="showHelp ? 'rotate-180' : ''">▼</span>
             </div>
-            <div class="flex flex-col items-start gap-2">
-                <span class="text-[var(--warning)] text-sm font-semibold whitespace-nowrap">访问localhost问题</span>
-                <span class="text-sm text-[var(--text-primary)]">
-                    <p>1.在 Chrome 地址栏输入 chrome://flags 并回车</p>
-                    <p>2.在页面顶部的搜索框中输入 Connect to Cast devices on all IP addresses</p>
-                    <p>3.找到该选项，将右侧的下拉菜单从 Default 改为 Disabled</p>
-                    <p>4.重启 Chrome 浏览器，问题通常就能解决</p>
-                </span>
+            <div v-if="showHelp" class="px-4 pb-4 flex flex-col gap-3">
+                <div class="flex items-start gap-2">
+                    <span class="text-[var(--warning)] text-sm font-semibold whitespace-nowrap">跨域问题</span>
+                    <span class="text-sm text-[var(--text-primary)]">
+                        本地模式可能遇到跨域问题，请安装扩展
+                        <a href="https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=zh-CN" target="_blank" class="text-[var(--accent)] underline">Allow CORS Access Control</a>
+                        ，<a href="CorsHelp.png" target="_blank" class="text-[var(--accent)] underline">并配置</a>
+                    </span>
+                </div>
+                <div class="flex flex-col items-start gap-2">
+                    <span class="text-[var(--warning)] text-sm font-semibold whitespace-nowrap">访问localhost问题</span>
+                    <span class="text-sm text-[var(--text-primary)]">
+                        <p>1.在 Chrome 地址栏输入 chrome://flags 并回车</p>
+                        <p>2.在页面顶部的搜索框中输入 Connect to Cast devices on all IP addresses</p>
+                        <p>3.找到该选项，将右侧的下拉菜单从 Default 改为 Disabled</p>
+                        <p>4.重启 Chrome 浏览器，问题通常就能解决</p>
+                    </span>
+                </div>
             </div>
-            
         </div>
 
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-auto">
@@ -148,6 +153,7 @@ export const HttpView = {
         const loading = ref(false);
         const responseView = ref('raw');
         const localMode = ref(false);
+        const showHelp = ref(false);
 
         const isImageResponse = computed(() => {
             if (!response.value) return false;
@@ -287,7 +293,7 @@ export const HttpView = {
         };
 
         return {
-            method, methods, url, headers, contentType, body, formFields, response, loading, responseView, localMode,
+            method, methods, url, headers, contentType, body, formFields, response, loading, responseView, localMode, showHelp,
             isImageResponse,
             addHeader, removeHeader, addFormField, removeFormField, send, refresh
         };
