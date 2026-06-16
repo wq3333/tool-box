@@ -3,6 +3,7 @@ import { FButton } from './components/FButton.js';
 import { FSingleSelect } from './components/FSingleSelect.js';
 import { CopyButton } from './components/CopyButton.js';
 import { ToastContainer, ToastPlugin } from './components/Toast.js';
+import { JsonTreeView } from './components/JsonTreeView.js';
 import { 
     IconLogo, IconMenu, IconClose, IconX, IconCopy, IconCheck, IconSun, IconMoon, IconPlus, IconTrash, 
     IconFile, IconImage, IconDownload, IconHash, IconChevronDown, IconClock, IconEdit, IconDocument, 
@@ -344,6 +345,7 @@ app.component('IconInfo', IconInfo);
 app.component('IconPlay', IconPlay);
 app.component('IconCircleCheck', IconCircleCheck);
 app.component('NavIcon', NavIcon);
+app.component('JsonTreeView', JsonTreeView);
 app.mount('#app');
 
 export { FButton, FSingleSelect, CopyButton };

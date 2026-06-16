@@ -145,7 +145,7 @@ export const HttpView = {
         const method = ref('GET');
         const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
         const url = ref('https://example.com/api');
-        const headers = ref([{ key: '', value: '' }]);
+        const headers = ref([]);
         const contentType = ref('application/json');
         const body = ref('');
         const formFields = ref([{ key: '', value: '', type: 'text', fileRef: null, fileName: '' }]);
@@ -283,7 +283,7 @@ export const HttpView = {
         const refresh = () => {
             method.value = 'GET';
             url.value = '';
-            headers.value = [{ key: '', value: '' }];
+            headers.value = [];
             contentType.value = 'application/json';
             body.value = '';
             formFields.value = [{ key: '', value: '', type: 'text', fileRef: null, fileName: '' }];

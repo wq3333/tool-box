@@ -1,6 +1,8 @@
 const { ref, computed } = Vue;
+import { JsonTreeView } from '../components/JsonTreeView.js';
 
 export const JsonView = {
+    components: { JsonTreeView },
     template: `
     <div class="h-full flex flex-col gap-4 p-4 bg-gradient-to-br from-[var(--bg-gradient-start)] to-[var(--bg-gradient-end)]">
         <div class="flex-none">
@@ -35,9 +37,10 @@ export const JsonView = {
             <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
                     <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
-                    <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
+                    <CopyButton v-if="currentOutput && !showTree" :text="currentOutput"></CopyButton>
                 </div>
-                <textarea v-model="currentOutput" readonly :placeholder="outputPlaceholder"
+                <JsonTreeView v-if="showTree" :node="parsedJson" class="json-tree-container" />
+                <textarea v-else v-model="currentOutput" readonly :placeholder="outputPlaceholder"
                     class="flex-1 min-h-0 px-4 py-3 bg-gradient-to-r from-[var(--bg-input)] to-[var(--accent-light)] border border-[var(--border-subtle)] rounded-lg text-sm font-mono text-[var(--text-primary)] outline-none resize-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder:text-[var(--text-placeholder)]"></textarea>
             </div>
         </div>
@@ -65,6 +68,13 @@ export const JsonView = {
             get() { return outputs.value[activeTab.value] || ''; },
             set(v) { outputs.value[activeTab.value] = v; }
         });
+
+        const parsedJson = computed(() => {
+            try { return JSON.parse(currentOutput.value); }
+            catch { return null; }
+        });
+
+        const showTree = computed(() => activeTab.value === 'format' && parsedJson.value !== null);
 
         const inputLabel = computed(() => {
             return { format: 'JSON输入', compress: 'JSON输入', 'to-csharp': 'JSON输入', 'from-csharp': 'C#类代码', escape: '文本输入', unescape: '转义文本输入' }[activeTab.value];
@@ -107,7 +117,8 @@ export const JsonView = {
 
         return {
             activeTab, rootName, tabs, inputs, outputs, currentInput, currentOutput,
-            inputLabel, inputPlaceholder, outputPlaceholder, executeLabel, execute, refresh
+            inputLabel, inputPlaceholder, outputPlaceholder, executeLabel, execute, refresh,
+            parsedJson, showTree
         };
     }
 };

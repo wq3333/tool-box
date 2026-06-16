@@ -11,6 +11,7 @@ public class JsonController : ControllerBase
     [HttpPost("format")]
     public DataReply<string> Format([FromBody] JsonTextRequest request)
     {
+        if (!IsValidJson(request.Json)) return DataReply.Failed<string>("Invalid JSON");
         var result = request.Json.FormatJson();
         return DataReply.Succeed(result);
     }
@@ -18,6 +19,7 @@ public class JsonController : ControllerBase
     [HttpPost("compress")]
     public DataReply<string> Compress([FromBody] JsonTextRequest request)
     {
+        if (!IsValidJson(request.Json)) return DataReply.Failed<string>("Invalid JSON");
         var result = request.Json.CompressJson();
         return DataReply.Succeed(result);
     }
@@ -25,6 +27,7 @@ public class JsonController : ControllerBase
     [HttpPost("to-csharp")]
     public DataReply<string> ToCSharp([FromBody] JsonToCSharpRequest request)
     {
+        if (!IsValidJson(request.Json)) return DataReply.Failed<string>("Invalid JSON");
         var rootName = string.IsNullOrWhiteSpace(request.RootName) ? "Root" : request.RootName;
         var code = JsonToCSharpConverter.Convert(request.Json, rootName);
         return DataReply.Succeed(code);
@@ -47,6 +50,19 @@ public class JsonController : ControllerBase
     public DataReply<string> Unescape([FromBody] JsonTextRequest request)
     {
         return DataReply.Succeed(request.Json.RemoveEscape());
+    }
+
+    static bool IsValidJson(string json)
+    {
+        try
+        {
+            JsonDocument.Parse(json);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
 
