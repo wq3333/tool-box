@@ -37,7 +37,7 @@ export const JsonView = {
             <div class="bg-[var(--bg-surface)] rounded-xl shadow-sm border border-[var(--border-subtle)] p-5 flex flex-col gap-4 flex-1 min-h-0">
                 <div class="flex items-center justify-between">
                     <label class="text-sm font-semibold text-[var(--text-primary)]">结果</label>
-                    <CopyButton v-if="currentOutput && !showTree" :text="currentOutput"></CopyButton>
+                    <CopyButton v-if="currentOutput" :text="currentOutput"></CopyButton>
                 </div>
                 <JsonTreeView v-if="showTree" :node="parsedJson" class="json-tree-container" />
                 <textarea v-else v-model="currentOutput" readonly :placeholder="outputPlaceholder"
