@@ -87,11 +87,11 @@ export const EncodingView = {
             try {
                 switch (activeTab.value) {
                     case 'url': currentOutput.value = decodeURIComponent(currentInput.value); break;
-                    case 'base64': currentOutput.value = decodeURIComponent(escape(atob(currentInput.value))); break;
+                    case 'base64': currentOutput.value = decodeURIComponent(atob(currentInput.value)); break;
                     case 'base64url':
                         let s = currentInput.value.replace(/-/g, '+').replace(/_/g, '/');
                         while (s.length % 4) s += '=';
-                        currentOutput.value = decodeURIComponent(escape(atob(s)));
+                        currentOutput.value = decodeURIComponent(atob(s));
                         break;
                     case 'utf8': utf8Decode(); break;
                     case 'hex': hexDecode(); break;

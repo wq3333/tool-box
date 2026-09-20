@@ -204,6 +204,12 @@ export const JwtView = {
         const verifyHeader = ref('');
         const verifyPayload = ref('');
 
+        const base64urlDecode = (str) => {
+            let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) base64 += '=';
+            return atob(base64);
+        }
+
         const jwtDoDecode = () => {
             if (!jwtDecodeToken.value) {
                 jwtHeaderJson.value = '';
@@ -219,12 +225,13 @@ export const JwtView = {
                 return;
             }
             try {
-                const h = JSON.parse(atob(parts[0]));
-                const p = JSON.parse(atob(parts[1]));
+                const h = JSON.parse(base64urlDecode(parts[0]));
+                const p = JSON.parse(base64urlDecode(parts[1]));
                 jwtHeaderJson.value = JSON.stringify(h, null, 2);
                 jwtPayloadJson.value = JSON.stringify(p, null, 2);
                 jwtSignature.value = parts[2];
-            } catch {
+            } catch (e) {
+                console.error(e);
                 jwtHeaderJson.value = '';
                 jwtPayloadJson.value = '';
                 jwtSignature.value = '';
